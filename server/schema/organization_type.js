@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID,GraphQLFloat, GraphQLList } = graphql;
 
-const Organization = mongoose.model('organization');
+// const Organization = mongoose.model('organization');
 
 const OrganizationType = new GraphQLObjectType({
   name:  'OrganizationType',

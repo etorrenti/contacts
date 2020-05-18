@@ -5,6 +5,8 @@ const PersonType = require('./person_type');
 const Person = mongoose.model('person');
 const OrganizationType = require('./organization_type');
 const Organization = mongoose.model('organization');
+const ListType = require('./list_type');
+const List = mongoose.model('list');
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -13,6 +15,12 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(PersonType),
       resolve() {
         return Person.find({});
+      }
+    },
+    lists: {
+      type: new GraphQLList(ListType),
+      resolve() {
+        return List.find({});
       }
     },
     organizations: {

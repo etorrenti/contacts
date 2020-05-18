@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = graphql;
 
 const ContactType = require('./contact_type');
-const Person = mongoose.model('person');
+// const Person = mongoose.model('person');
 
 const PersonType = new GraphQLObjectType({
   name:  'PersonType',
