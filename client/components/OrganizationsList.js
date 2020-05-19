@@ -8,20 +8,36 @@ import query from '../queries/fetchOrganizations';
 class OrganizationList extends Component {
 
   renderOrg(x) {
-    return <li key={x.id}>{x.name}</li>
+    return <li className="collection-item" key={x.id}>{x.name}</li>
+  }
+
+  renderOuter(children){
+    return (
+      <div>
+        <h1>Lista Organizzazioni</h1>
+        {children}
+      </div>
+    );
   }
 
   render() {
+    let children = [];
     if (!this.props.data.loading) {
-      return <div>
-        <ul>
+      children = <div>
+        <ul className="collection">
           {this.props.data.organizations.map(x => this.renderOrg(x))}
         </ul>
-        <Link to="/organizations/new">Aggiungi</Link>
+        <Link className="btn-floating btn-large waves-effect waves-light red" to="/organizations/new">
+          <i className="material-icons">add</i>
+        </Link>
       </div>
     } else {
-      return <div>Loading...</div>
+      children =  <div className="progress">
+        <div className="indeterminate"></div>
+      </div>
     }
+
+    return this.renderOuter(children);
   }
 }
 

@@ -8,6 +8,10 @@ import App from './components/App';
 import OrganizationsList from './components/OrganizationsList'
 import CreateOrganization from './components/CreateOrganization'
 
+import 'materialize-css/dist/css/materialize.css'
+import 'material-design-icons/iconfont/material-icons.css'
+import './style/style.css'
+
 const client = new ApolloClient({});
 
 const Root = () => {
