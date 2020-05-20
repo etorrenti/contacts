@@ -5,6 +5,8 @@ const Organization = mongoose.model('organization');
 const OrganizationType = require('./organization_type');
 const Person = mongoose.model('person');
 const PersonType = require('./person_type');
+const List = mongoose.model('list');
+const ListType = require('./list_type');
 
 const mutation = new GraphQLObjectType({
   name: 'Mutation',
@@ -58,6 +60,19 @@ const mutation = new GraphQLObjectType({
       },
       resolve(parentValue, {firstName, lastName, contact, organizationId, role}) {
 
+      }
+    },
+    addList: {
+      type: ListType,
+      args: {
+        name : {type: new GraphQLNonNull(GraphQLString)},
+        description : {type: GraphQLString},
+      },
+      resolve(parentValue, {name, description}) {
+        return (new List({
+          name,
+          description
+        })).save()
       }
     }
   }
