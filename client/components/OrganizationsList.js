@@ -8,7 +8,10 @@ import query from '../queries/fetchOrganizations';
 class OrganizationList extends Component {
 
   renderOrg(x) {
-    return <li className="collection-item" key={x.id}>{x.name}</li>
+    return <li className="collection-item" key={x.id}>
+      {x.name}
+      <i className="material-icons">delete</i>
+    </li>
   }
 
   renderOuter(children){
@@ -41,4 +44,13 @@ class OrganizationList extends Component {
   }
 }
 
-export default graphql(query)(OrganizationList);
+const mutation = gql`
+mutation DeleteOrganization($id: ID!) {
+  deleteOrganization(id: $id){
+    id
+  }
+}
+`;
+
+export default graphql(mutation)(
+  graphql(query)(OrganizationList));

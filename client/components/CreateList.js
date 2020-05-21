@@ -15,7 +15,6 @@ class CreateList extends Component {
   }
 
   onSubmit(e) {
-    console.log("XXX", e)
     e.preventDefault();
 
     this.props.mutate({

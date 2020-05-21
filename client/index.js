@@ -8,6 +8,7 @@ import App from './components/App';
 import Home from './components/Home'
 import CreateOrganization from './components/CreateOrganization'
 import CreateList from './components/CreateList'
+import OrganizationDetail from './components/OrganizationDetail'
 
 import 'materialize-css/dist/css/materialize.css'
 import 'material-design-icons/iconfont/material-icons.css'
@@ -21,6 +22,7 @@ const Root = () => {
       <Route path="/" component={App}>
         <IndexRoute component={Home}/>
         <Route path="/organizations/new" component={CreateOrganization}/>
+        <Route path="/organizations/:id" component={OrganizationDetail}/>
         <Route path="/lists/new" component={CreateList}/>
       </Route>
     </Router>

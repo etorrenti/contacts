@@ -14,67 +14,64 @@ const mutation = new GraphQLObjectType({
     addOrganization: {
       type: OrganizationType,
       args: {
-        name: {
-          type: new GraphQLNonNull(GraphQLString)
-        },
-        address: {
-          type: GraphQLString
-        },
-        city: {
-          type: GraphQLString
-        },
-        prov: {
-          type: GraphQLString
-        },
-        state: {
-          type: GraphQLString
-        },
-        lat: {
-          type: GraphQLFloat
-        },
-        lon: {
-          type: GraphQLFloat
-        }
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        address: { type: GraphQLString },
+        city: { type: GraphQLString },
+        prov:{ type: GraphQLString },
+        state: { type: GraphQLString },
+        lat: { type: GraphQLFloat },
+        lon: { type: GraphQLFloat },
       },
       resolve(parentValue, {name, address, city, prov, state, lat, lon}) {
         let location = [0.0, 0.0];
         if(lat && lon) {
           location = [lon, lat];
         }
-        return (new Organization({
-          name,
-          address,
-          city,
-          prov,
-          state,
-          location
-        })).save()
+        return (new Organization({name, address, city, prov, state, lat, lon}))
+          .save()
+      }
+    },
+    deleteOrganization: {
+      type: OrganizationType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parentValue, {id}) {
+        return Organization.remove({_id: id})
       }
     },
     addPerson: {
       type: OrganizationType,
       args: {
-        firstName : {type: new GraphQLNonNull(GraphQLString)},
-        lastName : {type: new GraphQLNonNull(GraphQLString)},
-        contact : {type: new GraphQLNonNull(GraphQLString)}
+        firstName : { type: new GraphQLNonNull(GraphQLString) },
+        lastName : { type: new GraphQLNonNull(GraphQLString) },
+        contact : { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, {firstName, lastName, contact, organizationId, role}) {
-
+        return (new Person({firstName, lastName, contact, organizationId, role}))
+          .save()
       }
     },
     addList: {
       type: ListType,
       args: {
-        name : {type: new GraphQLNonNull(GraphQLString)},
-        description : {type: GraphQLString},
+        name : { type: new GraphQLNonNull(GraphQLString) },
+        description : { type: GraphQLString },
       },
       resolve(parentValue, {name, description}) {
-        return (new List({
-          name,
-          description
-        })).save()
+        return (new List({name, description}))
+          .save()
       }
-    }
+    },
+    deleteList: {
+      type: ListType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parentValue, {id}) {
+        return List.remove({_id: id})
+      }
+    },
   }
 });
 
