@@ -21,8 +21,8 @@ const Root = () => {
     <Router history={hashHistory}>
       <Route path="/" component={App}>
         <IndexRoute component={Home}/>
-        <Route path="/organizations/new" component={CreateOrganization}/>
-        <Route path="/organizations/:id" component={OrganizationDetail}/>
+        <Route path="/organization/new" component={CreateOrganization}/>
+        <Route path="/organization/:id" component={OrganizationDetail}/>
         <Route path="/lists/new" component={CreateList}/>
       </Route>
     </Router>

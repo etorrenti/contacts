@@ -9,8 +9,8 @@ class OrganizationList extends Component {
 
   renderOrg(x) {
     return <li className="collection-item" key={x.id}>
-      {x.name}
-      <i className="material-icons">delete</i>
+      <Link to={`/organization/${x.id}`}>{x.name}</Link>
+       {/* <i className="material-icons">delete</i> */}
     </li>
   }
 
@@ -30,7 +30,7 @@ class OrganizationList extends Component {
         <ul className="collection">
           {this.props.data.organizations.map(x => this.renderOrg(x))}
         </ul>
-        <Link className="btn-floating btn-large waves-effect waves-light red" to="/organizations/new">
+        <Link className="btn-floating btn-large waves-effect waves-light red" to="/organization/new">
           <i className="material-icons">add</i>
         </Link>
       </div>

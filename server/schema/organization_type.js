@@ -1,8 +1,7 @@
 // const mongoose = require('mongoose');
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID,GraphQLFloat, GraphQLList } = graphql;
-
-// const Organization = mongoose.model('organization');
+const FunctionType = require('./function_type')
 
 const OrganizationType = new GraphQLObjectType({
   name:  'OrganizationType',
@@ -15,6 +14,9 @@ const OrganizationType = new GraphQLObjectType({
     state: { type: GraphQLString},
     location: {
       type: new GraphQLList(GraphQLFloat)
+    },
+    functions: {
+      type: new GraphQLList(FunctionType)
     }
   })
 });
