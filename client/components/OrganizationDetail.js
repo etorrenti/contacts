@@ -3,8 +3,8 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 
-import OrganizationList from './OrganizationsList'
-import ListList from './ListsList'
+import OrganizationFunctions from './OrganizationFunctions'
+
 import fetchOrganization from '../queries/fetchOrganization'
 
 class OrganizationDetail extends Component {
@@ -12,7 +12,10 @@ class OrganizationDetail extends Component {
   renderOrganization(organization) {
     if (organization) {
       return (
-        <h3>{organization.name}</h3>
+        <div>
+          <h3>{organization.name}</h3>
+          <OrganizationFunctions data={organization.functions}></OrganizationFunctions>
+        </div>
       );
     } else {
       return (<div className="error">

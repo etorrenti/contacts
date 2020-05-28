@@ -10,7 +10,37 @@ const OrganizationSchema = new Schema({
   prov: { type: String },
   state: { type: String },
   location: [Number],
-  functions: [Function]
+  functions: [{
+    type: Schema.Types.ObjectId,
+    ref: 'function'
+  }]
+},
+{
+  usePushEach: true
 });
+
+OrganizationSchema.statics.addFunction = function({organizationId, name}) {
+  const Function = mongoose.model('function');
+
+  return this.findById(organizationId)
+    .then(org => {
+      if(!org){
+        return null;
+      }
+      const funct = new Function({ name, org })
+      org.functions.push(funct)
+      return Promise.all([funct.save(), org.save()])
+        .then(([funct, org]) => org);
+    });
+}
+
+OrganizationSchema.statics.findFunctions = function(id) {
+  return this.findById(id)
+    .populate('functions')
+    .then(org => {
+      // console.log(org.functions)
+      return org.functions
+    });
+}
 
 mongoose.model('organization', OrganizationSchema);

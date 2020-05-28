@@ -6,7 +6,10 @@ const Contact = require('./contact')
 const FunctionSchema = new Schema({
   name: { type: String },
   description: { type: String },
-  contacts: [Contact]
+  contacts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'contact'
+  }]
 });
 
 mongoose.model('function', FunctionSchema);
