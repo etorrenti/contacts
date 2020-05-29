@@ -14,7 +14,7 @@ class OrganizationDetail extends Component {
       return (
         <div>
           <h3>{organization.name}</h3>
-          <OrganizationFunctions data={organization.functions}></OrganizationFunctions>
+          <OrganizationFunctions data={organization.functions} organizationId={organization.id}></OrganizationFunctions>
         </div>
       );
     } else {
@@ -25,8 +25,6 @@ class OrganizationDetail extends Component {
   }
 
   render() {
-    console.log(this.props)
-
     if(this.props.data.loading){
       return (
         <div className="progress">

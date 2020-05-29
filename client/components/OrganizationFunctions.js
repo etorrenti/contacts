@@ -17,7 +17,11 @@ class OrganizationFunctions extends Component {
   renderOuter(children){
     return (
       <div>
-        <h4>Funzioni</h4>
+        <h4>
+          Funzioni
+          &nbsp;
+          <Link to={`/organization/${this.props.organizationId}/functions/new`} className="btn-floating btn-small waves-effect waves-light red"><i className="material-icons">add</i></Link>
+        </h4>
         {children}
       </div>
     );

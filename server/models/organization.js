@@ -19,7 +19,7 @@ const OrganizationSchema = new Schema({
   usePushEach: true
 });
 
-OrganizationSchema.statics.addFunction = function({organizationId, name}) {
+OrganizationSchema.statics.addFunction = function({organizationId, name, description}) {
   const Function = mongoose.model('function');
 
   return this.findById(organizationId)
@@ -27,7 +27,7 @@ OrganizationSchema.statics.addFunction = function({organizationId, name}) {
       if(!org){
         return null;
       }
-      const funct = new Function({ name, org })
+      const funct = new Function({ name, description, org })
       org.functions.push(funct)
       return Promise.all([funct.save(), org.save()])
         .then(([funct, org]) => org);

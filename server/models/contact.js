@@ -6,4 +6,4 @@ const ContactSchema = new Schema({
   value: { type: String }
 });
 
-mongoose.model('Contact', ContactSchema);
+mongoose.model('contact', ContactSchema);

@@ -33,6 +33,7 @@ class CreateOrganization extends Component {
       <form onSubmit={this.onSubmit.bind(this)}>
         <label>Nome:</label>
         <input onChange={event => this.setState({name: event.target.value})} value={this.state.name}/>
+        <input id="submit_handle" type="submit" style={{display: "none"}} />
       </form>
     </div>);
   }

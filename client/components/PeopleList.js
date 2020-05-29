@@ -3,20 +3,20 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link} from 'react-router';
 
-import query from '../queries/fetchLists';
+import query from '../queries/fetchPeople';
 
-class ListsList extends Component {
+class PeopleList extends Component {
 
-  renderList(x) {
-    return <li className="collection-item" key={x.id}>{x.name}</li>
+  renderPerson(x) {
+    return <li className="collection-item" key={x.id}>{x.firstName} {x.lastName}</li>
   }
 
   renderOuter(children){
     return (
       <div>
-        <h2>Liste
+        <h2>Persone
         &nbsp;
-        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/lists/new">
+        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/people/new">
           <i className="material-icons">add</i>
         </Link>
         </h2>
@@ -30,7 +30,7 @@ class ListsList extends Component {
     if (!this.props.data.loading) {
       children = <div>
         <ul className="collection">
-          {this.props.data.lists.map(x => this.renderList(x))}
+          {this.props.data.people.map(x => this.renderPerson(x))}
         </ul>
       </div>
     } else {
@@ -43,4 +43,4 @@ class ListsList extends Component {
   }
 }
 
-export default graphql(query)(ListsList);
+export default graphql(query)(PeopleList);

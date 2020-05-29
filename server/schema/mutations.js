@@ -46,21 +46,29 @@ const mutation = new GraphQLObjectType({
       type: FunctionType,
       args: {
         organizationId: { type: new GraphQLNonNull(GraphQLID) },
-        name: {type: new GraphQLNonNull(GraphQLString)}
+        name: {type: new GraphQLNonNull(GraphQLString)},
+        description: {type: GraphQLString},
       },
-      resolve(parentValue, {organizationId, name}){
-        return Organization.addFunction({organizationId, name})
+      resolve(parentValue, {organizationId, name, description}){
+        return Organization.addFunction({organizationId, name, description})
       }
     },
     addPerson: {
-      type: OrganizationType,
+      type: PersonType,
       args: {
         firstName : { type: new GraphQLNonNull(GraphQLString) },
         lastName : { type: new GraphQLNonNull(GraphQLString) },
-        contact : { type: new GraphQLNonNull(GraphQLString) }
+        contact : { type: GraphQLString },
+        contactType : { type: GraphQLString }
       },
-      resolve(parentValue, {firstName, lastName, contact, organizationId, role}) {
-        return (new Person({firstName, lastName, contact, organizationId, role}))
+      resolve(parentValue, {firstName, lastName, contact, contactType}) {
+        let ct = null, contacts = [];
+        if(contact){
+          ct = {value: contact, contactType: contactType}
+          contacts.push(ct);
+        }
+        console.log({firstName, lastName, contacts})
+        return (new Person({firstName, lastName, contacts}))
           .save()
       }
     },

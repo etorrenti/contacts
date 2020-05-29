@@ -17,7 +17,12 @@ class OrganizationList extends Component {
   renderOuter(children){
     return (
       <div>
-        <h1>Lista Organizzazioni</h1>
+        <h2>Organizzazioni
+        &nbsp;
+        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/organization/new">
+          <i className="material-icons">add</i>
+        </Link>
+        </h2>
         {children}
       </div>
     );
@@ -30,9 +35,6 @@ class OrganizationList extends Component {
         <ul className="collection">
           {this.props.data.organizations.map(x => this.renderOrg(x))}
         </ul>
-        <Link className="btn-floating btn-large waves-effect waves-light red" to="/organization/new">
-          <i className="material-icons">add</i>
-        </Link>
       </div>
     } else {
       children =  <div className="progress">

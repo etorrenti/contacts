@@ -4,17 +4,21 @@ import ApolloClient from 'apollo-client';
 import {ApolloProvider} from 'react-apollo';
 import {Router, Route, hashHistory, IndexRoute} from 'react-router';
 
-import App from './components/App';
-import Home from './components/Home'
-import CreateOrganization from './components/CreateOrganization'
-import CreateList from './components/CreateList'
-import OrganizationDetail from './components/OrganizationDetail'
-
 import 'materialize-css/dist/css/materialize.css'
 import 'material-design-icons/iconfont/material-icons.css'
 import './style/style.css'
 
-const client = new ApolloClient({});
+import App from './components/App';
+import Home from './components/Home'
+import CreateOrganization from './components/CreateOrganization'
+import CreatePerson from './components/CreatePerson'
+import CreateFunction from './components/CreateFunction'
+import CreateList from './components/CreateList'
+import OrganizationDetail from './components/OrganizationDetail'
+
+const client = new ApolloClient({
+  dataIdFromObject: o => o.id
+});
 
 const Root = () => {
   return (<ApolloProvider client={client}>
@@ -22,7 +26,9 @@ const Root = () => {
       <Route path="/" component={App}>
         <IndexRoute component={Home}/>
         <Route path="/organization/new" component={CreateOrganization}/>
+        <Route path="/people/new" component={CreatePerson}/>
         <Route path="/organization/:id" component={OrganizationDetail}/>
+        <Route path="/organization/:id/functions/new" component={CreateFunction}/>
         <Route path="/lists/new" component={CreateList}/>
       </Route>
     </Router>
