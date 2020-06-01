@@ -9,6 +9,14 @@ import fetchPerson from '../queries/fetchPerson'
 
 class PersonDetail extends Component {
 
+  onDelete(i) {
+    console.log("On delete", i)
+  }
+
+  onEdit(i) {
+    console.log("On edit", i)
+  }
+
   renderContactTable(){
     let contacts = this.props.data.person.contacts;
     return(
@@ -27,8 +35,8 @@ class PersonDetail extends Component {
               <td>{c.value}</td>
               <td>{c.contactType}</td>
               <td>
-                <i className="material-icons">edit</i>
-                <i className="material-icons">delete</i>
+                <i className="material-icons pointer" onClick={() => this.onEdit(i) }>edit</i>
+                <i className="material-icons pointer" onClick={() => this.onDelete(i) }>delete</i>
               </td>
             </tr>
           );

@@ -45,3 +45,7 @@
 .collection-item:hover {
   background-color: #ccc;
 }
+
+.pointer {
+  cursor: pointer!important;
+}
