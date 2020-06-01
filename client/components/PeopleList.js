@@ -8,7 +8,9 @@ import query from '../queries/fetchPeople';
 class PeopleList extends Component {
 
   renderPerson(x) {
-    return <li className="collection-item" key={x.id}>{x.firstName} {x.lastName}</li>
+    return <li className="collection-item" key={x.id}>
+      <Link to={`/person/${x.id}`}>{x.firstName} {x.lastName}</Link>
+      </li>
   }
 
   renderOuter(children){
@@ -16,7 +18,7 @@ class PeopleList extends Component {
       <div>
         <h2>Persone
         &nbsp;
-        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/people/new">
+        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/person/new">
           <i className="material-icons">add</i>
         </Link>
         </h2>

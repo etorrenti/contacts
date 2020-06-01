@@ -5,7 +5,7 @@ const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = graphql;
 const ContactType = new GraphQLObjectType({
   name:  'ContactType',
   fields: () => ({
-    type: { type: GraphQLString },
+    contactType: { type: GraphQLString },
     value: { type: GraphQLString },
   })
 });

@@ -29,6 +29,13 @@ const RootQuery = new GraphQLObjectType({
         return Person.find({});
       }
     },
+    person: {
+      type: PersonType,
+      args: {id: {type: new GraphQLNonNull(GraphQLID)}},
+      resolve(parentValue, {id}) {
+        return Person.findOne({_id: id});
+      }
+    },
     organizations: {
       type: new GraphQLList(OrganizationType),
       args: {},

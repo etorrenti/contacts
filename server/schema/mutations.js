@@ -72,6 +72,28 @@ const mutation = new GraphQLObjectType({
           .save()
       }
     },
+    addContactToPerson: {
+      type: PersonType,
+      args: {
+        personId : { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: new GraphQLNonNull(GraphQLString) }
+      },
+      async resolve(parentValue, {personId, contact, contactType}) {
+        let person = await Person.findById(personId);
+        if(!person){
+          return null;
+        }
+        let k = {
+          contactType, value: contact
+        }
+        if(!person.contacts){
+          person.contacts = []
+        }
+        person.contacts.push(k);
+        return person.save();
+      }
+    },
     addList: {
       type: ListType,
       args: {

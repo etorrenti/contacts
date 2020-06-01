@@ -12,15 +12,15 @@ class Home extends Component {
   render() {
     return (
       <div className="row">
-        <div className="col s4">
+        <div className="col s6">
           <OrganizationList />
         </div>
-        <div className="col s4">
+        <div className="col s6">
           <PeopleList />
         </div>
-        <div className="col s4">
+        {/* <div className="col s4">
           <ListList />
-        </div>
+        </div> */}
       </div>
     );
   }
