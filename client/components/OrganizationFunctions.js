@@ -4,14 +4,27 @@ import gql from 'graphql-tag';
 import {Link} from 'react-router';
 
 import OrganizationFunctionDetail from './OrganizationFunctionDetail'
+import query from '../queries/fetchOrganization'
 
 class OrganizationFunctions extends Component {
+  onDelete(x) {
+    this.props.mutate({
+      variables: {
+        functionId: x.id,
+        organizationId: this.props.organizationId
+      },
+      refetchQueries: [{query: query, variables: {
+        id: this.props.organizationId
+      }}]
+    })
+    .catch((e) => console.log(e));
+  }
 
   renderFunction(x) {
-    return <div className="function" key={x.id}>
+    return <li className="function collection-item" key={x.id}>
       <OrganizationFunctionDetail data={x} />
-       {/* <i className="material-icons">delete</i> */}
-    </div>
+       <i onClick={ () => this.onDelete(x)} className="material-icons">delete</i>
+    </li>
   }
 
   renderOuter(children){
@@ -30,7 +43,9 @@ class OrganizationFunctions extends Component {
   render() {
     let children = [];
     if (!this.props.data.loading) {
-      children = this.props.data.map(x => this.renderFunction(x))
+      children = <ul className="collection">
+        {this.props.data.map(x => this.renderFunction(x))}
+      </ul>
     } else {
       children =  <div className="progress">
         <div className="indeterminate"></div>
@@ -41,5 +56,12 @@ class OrganizationFunctions extends Component {
   }
 }
 
+const mutation = gql`
+    mutation DeleteFunction($organizationId: ID!, $functionId: ID!){
+    deleteFunction(organizationId: $organizationId, functionId: $functionId){
+      id, name
+    }
+  }
+`
 
-export default OrganizationFunctions;
+export default graphql(mutation)(OrganizationFunctions);

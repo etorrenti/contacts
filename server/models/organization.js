@@ -34,6 +34,25 @@ OrganizationSchema.statics.addFunction = function({organizationId, name, descrip
     });
 }
 
+OrganizationSchema.statics.deleteFunction = function({organizationId, functionId}) {
+  const Function = mongoose.model('function');
+
+  return this.findById(organizationId)
+    .then(org => {
+      if(!org){
+        return null;
+      }
+
+      let i = org.functions.findIndex(x => x.id == functionId);
+      if(i >= 0){
+        org.functions.splice(i, 1);
+      }
+
+      return Promise.all([i >= 0 ? org.save() : org, Function.deleteOne({_id: functionId})])
+        .then(([org, funct]) => org);
+    })
+}
+
 OrganizationSchema.statics.findFunctions = function(id) {
   return this.findById(id)
     .populate('functions')
