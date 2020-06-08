@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import M from "materialize-css";
 import "materialize-css/dist/css/materialize.min.css";
 
@@ -29,14 +29,7 @@ class Modal extends Component {
 
   render() {
     return (
-      <>
-        <a
-          className="waves-effect waves-light btn modal-trigger"
-          data-target="modal1"
-        >
-          Modal
-        </a>
-
+      <div>
         <div
           ref={Modal => {
             this.Modal = Modal;
@@ -48,7 +41,7 @@ class Modal extends Component {
             <h4>Modal Header</h4>
             <p>A bunch of text</p>
           </div>
-          <div class="modal-footer">
+          <div className="modal-footer">
             <a className="modal-close waves-effect waves-red btn-flat">
               Disagree
             </a>
@@ -57,7 +50,7 @@ class Modal extends Component {
             </a>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }
