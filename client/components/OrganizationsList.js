@@ -7,10 +7,20 @@ import query from '../queries/fetchOrganizations';
 
 class OrganizationList extends Component {
 
+  onDelete(x){
+    this.props.mutate({
+      variables: {
+        id: x.id
+      },
+      refetchQueries: [{query: query}]
+    })
+    .catch((e) => console.log(e));
+  }
+
   renderOrg(x) {
     return <li className="collection-item" key={x.id}>
       <Link to={`/organization/${x.id}`}>{x.name}</Link>
-       {/* <i className="material-icons">delete</i> */}
+       <i onClick={ () => this.onDelete(x) } className="material-icons">delete</i>
     </li>
   }
 

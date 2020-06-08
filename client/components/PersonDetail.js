@@ -10,7 +10,24 @@ import fetchPerson from '../queries/fetchPerson'
 class PersonDetail extends Component {
 
   onDelete(i) {
-    console.log("On delete", i)
+    console.log("On delete", i, this)
+    let {contacts} = this.props.data.person;
+    if(!contacts || !contacts.length || contacts.length <= i){
+      return;
+    }
+
+    let c = contacts[i];
+    console.log(c)
+
+    this.props.mutate({
+      variables: {
+        personId: this.props.params.id,
+        contact: c.value,
+        contactType: c.contactType
+      },
+      refetchQueries: [{query: fetchPerson}]
+    })
+    .catch((e) => console.log(e));
   }
 
   onEdit(i) {
@@ -84,6 +101,16 @@ class PersonDetail extends Component {
   }
 }
 
-export default graphql(fetchPerson, {
+const mutation = gql`
+  mutation DeleteContactInPerson($personId: ID!, $contact: String!, $contactType: String){
+    deleteContactInPerson(personId: $personId, contact: $contact, contactType: $contactType){
+      id, contacts {
+        contactType, value
+      }
+    }
+  }
+`;
+
+export default graphql(mutation)(graphql(fetchPerson, {
   options: (props) => { return  { variables: {id: props.params.id}}}
-})(PersonDetail);
+})(PersonDetail));

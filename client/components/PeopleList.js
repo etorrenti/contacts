@@ -7,9 +7,20 @@ import query from '../queries/fetchPeople';
 
 class PeopleList extends Component {
 
+  onDelete(x){
+    this.props.mutate({
+      variables: {
+        id: x.id
+      },
+      refetchQueries: [{query: query}]
+    })
+    .catch((e) => console.log(e));
+  }
+
   renderPerson(x) {
     return <li className="collection-item" key={x.id}>
       <Link to={`/person/${x.id}`}>{x.firstName} {x.lastName}</Link>
+       <i className="material-icons" onClick={ () => this.onDelete(x) }>delete</i>
       </li>
   }
 
@@ -45,4 +56,11 @@ class PeopleList extends Component {
   }
 }
 
-export default graphql(query)(PeopleList);
+const mutation = gql`
+  mutation DeletePerson($id: ID!){
+    deletePerson(id: $id){
+      id
+    }
+  }
+`;
+export default graphql(mutation)(graphql(query)(PeopleList));

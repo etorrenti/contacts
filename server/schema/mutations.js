@@ -72,6 +72,15 @@ const mutation = new GraphQLObjectType({
           .save()
       }
     },
+    deletePerson: {
+      type: PersonType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parentValue, {id}) {
+        return Person.remove({_id: id})
+      }
+    },
     addContactToPerson: {
       type: PersonType,
       args: {
@@ -91,6 +100,33 @@ const mutation = new GraphQLObjectType({
           person.contacts = []
         }
         person.contacts.push(k);
+        return person.save();
+      }
+    },
+    deleteContactInPerson: {
+      type: PersonType,
+      args: {
+        personId : { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: GraphQLString }
+      },
+      async resolve(parentValue, {personId, contact, contactType}) {
+        let person = await Person.findById(personId);
+        if(!person){
+          return null;
+        }
+        let k = {
+          contactType, value: contact
+        }
+        if(!person.contacts){
+          person.contacts = []
+        } else {
+          let i = person.contacts.findIndex( x => x.contactType == contactType && x.value == contact);
+          if(i >= 0){
+            person.contacts.splice(i, 1);
+          }
+        }
+
         return person.save();
       }
     },
