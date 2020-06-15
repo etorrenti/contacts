@@ -7,6 +7,8 @@ const OrganizationType = require('./organization_type');
 const Organization = mongoose.model('organization');
 const ListType = require('./list_type');
 const List = mongoose.model('list');
+const FunctionType = require('./function_type');
+const Function = mongoose.model('function');
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -48,6 +50,13 @@ const RootQuery = new GraphQLObjectType({
       args: {id: {type: new GraphQLNonNull(GraphQLID)}},
       resolve(parentValue, {id}) {
         return Organization.findOne({_id: id});
+      }
+    },
+    functionById: {
+      type: FunctionType,
+      args: {id: {type: new GraphQLNonNull(GraphQLID)}},
+      resolve(parentValue, {id}) {
+        return Function.findOne({_id: id});
       }
     }
   })

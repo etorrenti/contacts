@@ -53,6 +53,29 @@ const mutation = new GraphQLObjectType({
         return Organization.addFunction({organizationId, name, description})
       }
     },
+    addContactToFunction: {
+      type: FunctionType,
+      args: {
+        functionId: { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, {functionId, contact, contactType}) {
+        // console.log({functionId, contact, contactType})
+        return Function.addContact({functionId, contact, contactType});
+      }
+    },
+    deleteContactInFunction: {
+      type: FunctionType,
+      args: {
+        functionId: { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, {functionId, contact, contactType}) {
+        return Function.delete({functionId, contact, contactType});
+      }
+    },
     deleteFunction: {
       type: FunctionType,
       args: {
