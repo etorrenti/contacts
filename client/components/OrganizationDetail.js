@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 
 import OrganizationFunctions from './OrganizationFunctions'
+import OrganizationPeople from './OrganizationPeople'
 
 import fetchOrganization from '../queries/fetchOrganization'
 
@@ -15,6 +16,7 @@ class OrganizationDetail extends Component {
         <div>
           <h3>{organization.name}</h3>
           <OrganizationFunctions data={organization.functions} organizationId={organization.id}></OrganizationFunctions>
+          <OrganizationPeople data={organization.people} organizationId={organization.id}></OrganizationPeople>
         </div>
       );
     } else {

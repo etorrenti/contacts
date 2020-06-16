@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLNonNull } = graphql;
+const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLNonNull, GraphQLString } = graphql;
 const PersonType = require('./person_type');
 const Person = mongoose.model('person');
 const OrganizationType = require('./organization_type');
@@ -25,10 +25,11 @@ const RootQuery = new GraphQLObjectType({
         return List.find({});
       }
     },
-    people: {
+    searchPeople: {
       type: new GraphQLList(PersonType),
-      resolve() {
-        return Person.find({});
+      args: {query: {type: new GraphQLNonNull(GraphQLString)}},
+      resolve(parentValue, {query}) {
+        return Person.search({query});
       }
     },
     person: {

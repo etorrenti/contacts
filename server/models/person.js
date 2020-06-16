@@ -37,4 +37,12 @@ PersonSchema.statics.findContacts = function(id) {
     });
 }
 
+PersonSchema.statics.search = function({query}) {
+  const re = new RegExp(query, 'i');
+  return this.find({$or: [
+    {firstName: re},
+    {lastName: re}
+  ]});
+}
+
 mongoose.model('person', PersonSchema);
