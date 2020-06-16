@@ -7,6 +7,10 @@ import query from '../queries/fetchOrganization'
 
 class OrganizationPeople extends Component {
 
+  addPerson(e){
+    e.preventDefault();
+  }
+
   renderPerson(x) {
     return <div className="col s12 m4" key={x.id}>
     </div>
@@ -18,7 +22,9 @@ class OrganizationPeople extends Component {
         <h4>
           Ruoli
           &nbsp;
-          <Link to={`/organization/${this.props.organizationId}/people/add`} className="btn-floating btn-small waves-effect waves-light red"><i className="material-icons">add</i></Link>
+          <a className="btn-floating btn-small waves-effect waves-light red" href="#" onClick={ (e) => this.addPerson(e) }>
+            <i className="material-icons">add</i>
+          </a>
         </h4>
         {children}
       </div>
