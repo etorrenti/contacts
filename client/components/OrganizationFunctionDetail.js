@@ -3,6 +3,7 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 import query from '../queries/fetchOrganization'
+import { compose } from 'recompose'
 
 class OrganizationFunctionDetail extends Component {
   onDelete(x) {
@@ -18,8 +19,27 @@ class OrganizationFunctionDetail extends Component {
     .catch((e) => console.log(e));
   }
 
-  onDeleteContact(index) {
-    //TODO:
+  onDeleteContact(i) {
+    console.log("On delete", i, this)
+    let {contacts} = this.props.data;
+    if(!contacts || !contacts.length || contacts.length <= i){
+      return;
+    }
+
+    let c = contacts[i];
+    console.log(c)
+
+    this.props.deleteContact({
+      variables: {
+        functionId: this.props.data.id,
+        contact: c.value,
+        contactType: c.contactType
+      },
+      refetchQueries: [{query: query, variables: {
+        id: this.props.organizationId
+      }}]
+    })
+    .catch((e) => console.log(e));
   }
 
   renderContact(contact, index){
@@ -68,5 +88,16 @@ const mutation = gql`
     }
   }
 `
+const deleteContact = gql`
+  mutation DeleteContactInFunction($functionId: ID!, $contact: String!, $contactType: String!){
+    deleteContactInFunction(functionId: $functionId, contact: $contact, contactType: $contactType){
+      id, contacts {
+        contactType, value
+      }
+    }
+  }
+`
 
-export default graphql(mutation)(OrganizationFunctionDetail);
+export default compose(
+  graphql(mutation),
+  graphql(deleteContact, {name: 'deleteContact'}))(OrganizationFunctionDetail);

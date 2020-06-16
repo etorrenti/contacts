@@ -73,7 +73,7 @@ const mutation = new GraphQLObjectType({
         contactType : { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parentValue, {functionId, contact, contactType}) {
-        return Function.delete({functionId, contact, contactType});
+        return Function.deleteContact({functionId, contact, contactType});
       }
     },
     deleteFunction: {
