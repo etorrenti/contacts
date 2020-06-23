@@ -49,3 +49,8 @@
 .pointer {
   cursor: pointer!important;
 }
+
+ul.collection.contacts{
+  overflow-y: auto;
+  max-height: 176px;
+}

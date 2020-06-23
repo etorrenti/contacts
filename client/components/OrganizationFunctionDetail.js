@@ -55,7 +55,7 @@ class OrganizationFunctionDetail extends Component {
       return null;
     }
 
-    return <ul className="collection">
+    return <ul className="collection contacts">
       { contacts.map( (c, i) => this.renderContact(c, i)) }
     </ul>
   }
