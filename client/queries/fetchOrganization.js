@@ -7,6 +7,11 @@ query Organization($id: ID!){
       id, name, description, contacts{
         contactType, value
       }
+    },
+    roles {
+      title, person {
+        id, firstName, lastName
+      }
     }
   }
 }

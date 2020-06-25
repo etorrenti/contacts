@@ -7,16 +7,19 @@ import OrganizationFunctions from './OrganizationFunctions'
 import OrganizationPeople from './OrganizationPeople'
 
 import fetchOrganization from '../queries/fetchOrganization'
+import fetchPeople from '../queries/fetchPeople'
+import { compose } from 'recompose'
 
 class OrganizationDetail extends Component {
 
   renderOrganization(organization) {
     if (organization) {
+      console.log(this, organization)
       return (
         <div>
           <h3>{organization.name}</h3>
           <OrganizationFunctions data={organization.functions} organizationId={organization.id}></OrganizationFunctions>
-          <OrganizationPeople data={organization.people} organizationId={organization.id}></OrganizationPeople>
+          <OrganizationPeople data={ {data: organization.roles, people: this.props.people.people} } organizationId={organization.id}></OrganizationPeople>
         </div>
       );
     } else {
@@ -46,6 +49,9 @@ class OrganizationDetail extends Component {
   }
 }
 
-export default graphql(fetchOrganization, {
+export default compose(
+  graphql(fetchPeople, {name: 'people'}),
+  graphql(fetchOrganization, {
   options: (props) => { return  { variables: {id: props.params.id}}}
-})(OrganizationDetail);
+}))(OrganizationDetail)
+;

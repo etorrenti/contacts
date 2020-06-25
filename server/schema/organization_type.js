@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID,GraphQLFloat, GraphQLList } = graphql;
 const FunctionType = require('./function_type')
+const PersonType = require('./person_type')
 const Organization = mongoose.model('organization')
 
 const OrganizationType = new GraphQLObjectType({
@@ -21,6 +22,15 @@ const OrganizationType = new GraphQLObjectType({
       resolve(parentValue){
         return Organization.findFunctions(parentValue.id)
       }
+    },
+    roles: {
+      type: new GraphQLList(new GraphQLObjectType({
+        name:  'RoleType',
+        fields: () => ({
+          title: { type: GraphQLString },
+          person: { type: PersonType }
+        })
+      }))
     }
   })
 });

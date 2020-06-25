@@ -3,12 +3,24 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link} from 'react-router';
 
+import AddRoleDialog from './AddRoleDialog'
+
 import query from '../queries/fetchOrganization'
+import peopleQuery from '../queries/fetchPeople'
 
 class OrganizationPeople extends Component {
+  constructor(){
+    super()
+    this.state = {
+      addRoleOpen: false
+    }
+  }
 
   addPerson(e){
-    e.preventDefault();
+    e.preventDefault()
+    this.setState({
+      addRoleOpen: true
+    })
   }
 
   renderPerson(x) {
@@ -16,7 +28,19 @@ class OrganizationPeople extends Component {
     </div>
   }
 
+  handleAddRole(x) {
+    console.log("Add role", x)
+    this.closeAddRoleDialog()
+  }
+
+  closeAddRoleDialog(){
+    this.setState({
+      addRoleOpen: false
+    })
+  }
+
   renderOuter(children){
+    console.log(this)
     return (
       <div>
         <h4>
@@ -27,20 +51,21 @@ class OrganizationPeople extends Component {
           </a>
         </h4>
         {children}
+        <AddRoleDialog open={ this.state.addRoleOpen }
+          addCallback= { (x) => this.handleAddRole(x)}
+          cancelCallback= { () => this.closeAddRoleDialog()}
+        />
       </div>
     );
   }
 
   render() {
+    console.log("XXX", this)
     let children = [];
-    const {data} = this.props;
-    if (data && !data.loading) {
+    const {roles} = (this.props.data.roles) || [];
+    if (roles) {
       children = <div className="people row">
-        {this.props.data.map(x => this.renderPerson(x))}
-      </div>
-    } else if(data && data.loading){
-      children =  <div className="progress">
-        <div className="indeterminate"></div>
+        {this.props.data.roles.map(x => this.renderPerson(x))}
       </div>
     } else {
       children =  <div className="people row">

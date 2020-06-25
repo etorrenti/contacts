@@ -2,19 +2,12 @@ import React, {Component} from 'react';
 import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link} from 'react-router';
-import M from "materialize-css";
-
-import Modal from "./Modal"
 
 import query from '../queries/fetchOrganizations';
 
 class OrganizationList extends Component {
 
   onDelete(x){
-    // let m = M.Modal.getInstance(document.getElementById('modal1'))
-    // m.open()
-    // console.log(this)
-    // return;
     this.props.mutate({
       variables: {
         id: x.id
@@ -41,7 +34,6 @@ class OrganizationList extends Component {
         </Link>
         </h2>
         {children}
-        <Modal />
       </div>
     );
   }
