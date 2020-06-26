@@ -42,6 +42,28 @@ const mutation = new GraphQLObjectType({
         return Organization.remove({_id: id})
       }
     },
+    addRole: {
+      type: OrganizationType,
+      args: {
+        organizationId: { new GraphQLNonNull(GraphQLID) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        personId: { GraphQLID }
+      },
+      resolve(parentValue, {organizationId, title, personId}){
+        return Organization.addRole({organizationId, title, personId})
+      }
+    },
+    deleteRole: {
+      type: OrganizationType,
+      args: {
+        organizationId: { new GraphQLNonNull(GraphQLID) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
+        personId: { GraphQLID }
+      },
+      resolve(parentValue, {organizationId, title, personId}){
+        return Organization.deleteRole({organizationId, title, personId})
+      }
+    },
     addFunction: {
       type: FunctionType,
       args: {

@@ -54,6 +54,7 @@ class OrganizationPeople extends Component {
         <AddRoleDialog open={ this.state.addRoleOpen }
           addCallback= { (x) => this.handleAddRole(x)}
           cancelCallback= { () => this.closeAddRoleDialog()}
+          people={ this.props.data.people }
         />
       </div>
     );

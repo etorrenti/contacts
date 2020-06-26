@@ -11,6 +11,34 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 export default function AddRoleDialog(props) {
   const [role, setRole] = React.useState("");
   const [person, setPerson] = React.useState(null);
+  const [errors, setErrors] = React.useState([]);
+
+  const validate = () => {
+    let errs = [];
+
+    if(!(role && role.length && role.length && role.length > 0)){
+      errs.push({
+        field: "role",
+        message: "Scegli un ruolo"
+      })
+    }
+
+    setErrors(errs);
+    return errs.length == 0;
+  }
+
+  const hasErrors = (field) => {
+    return errors.findIndex( x => x.field == field) >= 0;
+  }
+
+  const errorMessage = (field) => {
+    const i = errors.findIndex( x => x.field == field);
+    if(i < 0){
+      return null;
+    }
+
+    return errors[i].message;
+  }
 
   const handleCancel = () => {
     if(props.cancelCallback) {
@@ -19,7 +47,9 @@ export default function AddRoleDialog(props) {
   };
 
   const handleAdd = () => {
-    if(props.addCallback) {
+    const ok = validate();
+
+    if(ok && props.addCallback) {
       props.addCallback({role, person});
     }
   };
@@ -32,22 +62,28 @@ export default function AddRoleDialog(props) {
           <DialogContentText>
             Crea un ruolo nell'organizzazione
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="role"
-            label="Ruolo"
-            type="text"
-            onChange={ (e) => setRole(e.target.value)}
-            fullWidth
-          />
-          <Autocomplete
-            id="autocomplete"
-            options={ props.people || [] }
-            getOptionLabel={(option) => option.title}
-            style={{ width: '450px' }}
-            renderInput={(params) => <TextField {...params} label="Titolare (opzionale)" variant="outlined" />}
-          />
+          <form>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="role"
+              error={ hasErrors('role') }
+              helperText={ errorMessage('role') }
+              label="Ruolo"
+              type="text"
+              required
+              onChange={ (e) => setRole(e.target.value)}
+              fullWidth
+            />
+            <Autocomplete
+              id="autocomplete"
+              options={ props.people || [] }
+              getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+              style={{ width: '450px' }}
+              renderInput={(params) => <TextField {...params} label="Titolare (opzionale)" variant="outlined" />}
+              onChange={ (e, value) => setPerson(value)}
+            />
+          </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
