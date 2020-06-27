@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Function = require('./function')
-const Person = require('./person')
-
 const OrganizationSchema = new Schema({
   name: { type: String },
   description: { type: String },
@@ -15,15 +12,10 @@ const OrganizationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'function'
   }],
-  roles: [
-    {
-      title: { type: String },
-      person: {
-        type: Schema.Types.ObjectId,
-        ref: 'person'
-      }
-    }
-  ]
+  roles: [{
+    type: Schema.Types.ObjectId,
+    ref: 'role'
+  }],
 },
 {
   usePushEach: true
@@ -44,14 +36,22 @@ OrganizationSchema.statics.addFunction = function({organizationId, name, descrip
 }
 
 OrganizationSchema.statics.addRole = function({organizationId, title, personId}) {
+  const Person = mongoose.model('person');
+  const Role = mongoose.model('role');
   return Promise.all([this.findById(organizationId), Person.findById(personId)])
     .then(([org, person]) => {
       if(!org){
         return null;
       }
-      const role = {title, person}
+      const pId = person == null ? null : person.id;
+      const role = new Role({title, person: pId, organization: org.id})
+      console.log("Insert role:", role)
+      if(!org.roles){
+        org.roles = []
+      }
       org.roles.push(role)
-      return org
+      return Promise.all([org.save(), role.save()])
+      .then(([org, role]) => org)
     });
 }
 
@@ -75,16 +75,36 @@ OrganizationSchema.statics.deleteFunction = function({organizationId, functionId
 
 OrganizationSchema.statics.deleteRole = function({organizationId, title, personId}) {
   return this.findById(organizationId)
+    .populate({
+      path:"roles",
+      populate:{path: "person", model:"person"}
+    })
     .then(org => {
       if(!org){
         return null;
       }
 
-      let i = org.roles.findIndex(x => x.title == title && x.person._id == personId );
+      let i = org.roles.findIndex(x => {
+        if(x.title == title) {
+          return (x.person && x.person.id == personId)
+            || (!x.person && !personId)
+        }
+        return false;
+      });
+      console.log("zzzzz", i)
+
+      let role = null;
       if(i >= 0){
+        role = org.roles[i]
         org.roles.splice(i, 1);
       }
-      return org.save()
+      const Role = mongoose.model('role');
+      let promises = [org.save()];
+      if(role){
+        promises.push(Role.deleteOne({_id: role.id}));
+      }
+      return Promise.all(promises)
+      .then(([org, role]) => org)
     })
 }
 
@@ -99,10 +119,10 @@ OrganizationSchema.statics.findFunctions = function(id) {
 
 OrganizationSchema.statics.findRoles = function(id) {
   return this.findById(id)
-    .then(org => {
-      console.log(org.roles)
-      return org.roles.map(x => x.populate('persons'))
-    });
+    .populate({
+      path:"roles",
+      populate:{path: "person", model:"person"}
+    }).then(org => org.roles);
 }
 
 mongoose.model('organization', OrganizationSchema);

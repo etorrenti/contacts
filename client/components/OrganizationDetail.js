@@ -19,7 +19,7 @@ class OrganizationDetail extends Component {
         <div>
           <h3>{organization.name}</h3>
           <OrganizationFunctions data={organization.functions} organizationId={organization.id}></OrganizationFunctions>
-          <OrganizationPeople data={ {data: organization.roles, people: this.props.people.people} } organizationId={organization.id}></OrganizationPeople>
+          <OrganizationPeople data={ {roles: organization.roles, people: this.props.people.people} } organizationId={organization.id}></OrganizationPeople>
         </div>
       );
     } else {
