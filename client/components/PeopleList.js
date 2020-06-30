@@ -5,7 +5,17 @@ import {Link} from 'react-router';
 
 import query from '../queries/fetchPeople';
 
+import EditPersonDialog from './EditPersonDialog'
+
 class PeopleList extends Component {
+  constructor() {
+    super();
+    this.state = {
+      editPersonDialogOpen: false,
+      personId: null,
+      edit: false
+    }
+  }
 
   onDelete(x){
     this.props.mutate({
@@ -21,7 +31,31 @@ class PeopleList extends Component {
     return <li className="collection-item" key={x.id}>
       <Link to={`/person/${x.id}`}>{x.firstName} {x.lastName}</Link>
        <i className="material-icons" onClick={ () => this.onDelete(x) }>delete</i>
+       <i className="material-icons" onClick={ () => this.editPerson(x.id) }>edit</i>
       </li>
+  }
+
+  newPerson() {
+    console.log("new person", this)
+    this.setState({
+      edit: false,
+      editPersonDialogOpen: true
+    })
+  }
+
+  editPerson(id) {
+    console.log("edit person", id)
+    this.setState({
+      edit: true,
+      editPersonDialogOpen: true,
+      personId: id
+    })
+  }
+
+  closeEditDialog() {
+    this.setState({
+      editPersonDialogOpen: false
+    })
   }
 
   renderOuter(children){
@@ -29,11 +63,16 @@ class PeopleList extends Component {
       <div>
         <h2>Persone
         &nbsp;
-        <Link className="btn-floating btn-medium waves-effect waves-light red" to="/person/new">
+        <a className="btn-floating btn-medium waves-effect waves-light red" onClick= { () => this.newPerson() }>
           <i className="material-icons">add</i>
-        </Link>
+        </a>
         </h2>
         {children}
+        <EditPersonDialog
+          open = { this.state.editPersonDialogOpen }
+          onClose = { () => this.closeEditDialog() }
+          edit = { this.state.edit }
+          personId = { this.state.personId } />
       </div>
     );
   }

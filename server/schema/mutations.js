@@ -113,18 +113,31 @@ const mutation = new GraphQLObjectType({
       args: {
         firstName : { type: new GraphQLNonNull(GraphQLString) },
         lastName : { type: new GraphQLNonNull(GraphQLString) },
+        title : { type: GraphQLString },
         contact : { type: GraphQLString },
         contactType : { type: GraphQLString }
       },
-      resolve(parentValue, {firstName, lastName, contact, contactType}) {
+      resolve(parentValue, {firstName, lastName, contact, title, contactType}) {
         let ct = null, contacts = [];
         if(contact){
           ct = {value: contact, contactType: contactType}
           contacts.push(ct);
         }
         console.log({firstName, lastName, contacts})
-        return (new Person({firstName, lastName, contacts}))
+        return (new Person({firstName, lastName, contacts, title}))
           .save()
+      }
+    },
+    updatePerson: {
+      type: PersonType,
+      args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        firstName : { type: new GraphQLNonNull(GraphQLString) },
+        lastName : { type: new GraphQLNonNull(GraphQLString) },
+        title : { type: GraphQLString }
+      },
+      resolve(parentValue, {id, firstName, lastName, title}) {
+        return Person.findOneAndUpdate({_id: id}, {id, firstName, lastName, title}, {new: true});
       }
     },
     deletePerson: {

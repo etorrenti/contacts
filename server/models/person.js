@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const PersonSchema = new Schema({
   firstName: { type: String },
   lastName: { type: String },
+  title: { type: String },
   // address: {},
   contacts: [{
     contactType: String,
