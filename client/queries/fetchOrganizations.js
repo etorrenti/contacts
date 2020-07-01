@@ -3,8 +3,7 @@ import gql from 'graphql-tag'
 export default gql`
 query {
   organizations {
-    id,
-    name
+    id, name, description, address, city, prov, state
   }
 }
 `

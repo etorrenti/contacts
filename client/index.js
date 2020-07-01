@@ -12,8 +12,8 @@ import './style/style.css'
 
 import App from './components/App';
 import Home from './components/Home'
-import CreateOrganization from './components/CreateOrganization'
-import CreatePerson from './components/CreatePerson'
+// import CreateOrganization from './components/CreateOrganization'
+// import CreatePerson from './components/CreatePerson'
 import CreateFunction from './components/CreateFunction'
 import CreateFunctionContact from './components/CreateFunctionContact'
 import CreateList from './components/CreateList'
@@ -37,8 +37,8 @@ const Root = () => {
     <Router history={hashHistory}>
       <Route path="/" component={App}>
         <IndexRoute component={Home}/>
-        <Route path="/organization/new" component={CreateOrganization}/>
-        <Route path="/person/new" component={CreatePerson}/>
+        {/* <Route path="/organization/new" component={CreateOrganization}/> */}
+        {/* <Route path="/person/new" component={CreatePerson}/> */}
         <Route path="/organization/:id" component={OrganizationDetail}/>
         <Route path="/person/:id" component={PersonDetail}/>
         <Route path="/person/:id/contacts/new" component={CreatePersonContact}/>

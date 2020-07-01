@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {graphql} from 'react-apollo';
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import gql from 'graphql-tag';
 
 import Button from '@material-ui/core/Button';
@@ -14,13 +14,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import query from '../queries/fetchPeople';
 
 export default function EditPersonDialog(props) {
-  console.log("EditPersonDialog", props, this)
+  console.log("EditPersonDialog", props)
 
   const {open, edit, person, onClose} = props;
-  const [firstName, setFirstName] = edit ? React.useState(person.firstName) : React.useState("");
-  const [lastName, setLastName] = edit ? React.useState(person.lastName) :  React.useState("");
-
-  const [title, setTitle] = edit ? React.useState(person.title) : React.useState("");
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [title, setTitle] = React.useState("");
   const [contact, setContact] = React.useState("");
   const [contactType, setContactType] = React.useState("TELEPHONE");
   const [errors, setErrors] = React.useState([]);
@@ -59,6 +58,8 @@ export default function EditPersonDialog(props) {
       setTitle(person.title)
       setFirstName(person.firstName)
       setLastName(person.lastName)
+    } else {
+      resetFields();
     }
   }, [edit, person]);
 
@@ -113,7 +114,7 @@ export default function EditPersonDialog(props) {
   }
 
   const handleCancel = () => {
-    resetFields()
+    // resetFields()
     fireClose()
   }
 
@@ -142,7 +143,7 @@ export default function EditPersonDialog(props) {
     })
     .then(() => {
       fireClose();
-      resetFields();
+      // resetFields();
     })
     .catch(err => console.log(err));
   }

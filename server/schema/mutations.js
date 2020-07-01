@@ -17,6 +17,7 @@ const mutation = new GraphQLObjectType({
       type: OrganizationType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLString },
         address: { type: GraphQLString },
         city: { type: GraphQLString },
         prov:{ type: GraphQLString },
@@ -24,13 +25,34 @@ const mutation = new GraphQLObjectType({
         lat: { type: GraphQLFloat },
         lon: { type: GraphQLFloat },
       },
-      resolve(parentValue, {name, address, city, prov, state, lat, lon}) {
+      resolve(parentValue, {name, description, address, city, prov, state, lat, lon}) {
         let location = [0.0, 0.0];
         if(lat && lon) {
           location = [lon, lat];
         }
-        return (new Organization({name, address, city, prov, state, lat, lon}))
+        return (new Organization({name, description, address, city, prov, state, lat, lon}))
           .save()
+      }
+    },
+    updateOrganization: {
+      type: OrganizationType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLString },
+        address: { type: GraphQLString },
+        city: { type: GraphQLString },
+        prov:{ type: GraphQLString },
+        state: { type: GraphQLString },
+        lat: { type: GraphQLFloat },
+        lon: { type: GraphQLFloat },
+      },
+      resolve(parentValue, {id, name, description, address, city, prov, state, lat, lon}) {
+        let location = [0.0, 0.0];
+        if(lat && lon) {
+          location = [lon, lat];
+        }
+        return Organization.findOneAndUpdate({_id: id}, {name, description, address, city, prov, state, location}, {new: true});
       }
     },
     deleteOrganization: {

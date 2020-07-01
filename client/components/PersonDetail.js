@@ -4,10 +4,30 @@ import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 
 import OrganizationFunctions from './OrganizationFunctions'
+import EditPersonDialog from './EditPersonDialog'
 
 import fetchPerson from '../queries/fetchPerson'
 
 class PersonDetail extends Component {
+  constructor() {
+    super();
+    this.state = {
+      editPersonDialogOpen: false,
+    }
+  }
+
+  closeEditDialog() {
+    this.setState({
+      editPersonDialogOpen: false
+    })
+  }
+
+  editPerson() {
+    console.log("edit person", this.props.data.person)
+    this.setState({
+      editPersonDialogOpen: true,
+    })
+  }
 
   onDelete(i) {
     console.log("On delete", i, this)
@@ -67,11 +87,20 @@ class PersonDetail extends Component {
     if (person) {
       return (
         <div>
-          <h3>{person.firstName} {person.lastName}</h3>
+          <h3>
+            { person.title ? person.title + " ": ""}{person.firstName} {person.lastName}
+            <i className="material-icons pointer" onClick={ () => this.editPerson(person) }>edit</i>
+          </h3>
           { (person.contacts && person.contacts.length && person.contacts.length > 0) ? this.renderContactTable() : [] }
           <Link className="btn-floating btn-medium waves-effect waves-light red" to={`/person/${person.id}/contacts/new`}>
             <i className="material-icons">add</i>
           </Link>
+
+          <EditPersonDialog
+            open = { this.state.editPersonDialogOpen }
+            onClose = { () => this.closeEditDialog() }
+            edit = { true }
+            person = { person } />
         </div>
       );
     } else {

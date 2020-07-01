@@ -5,6 +5,7 @@ const OrganizationSchema = new Schema({
   name: { type: String },
   description: { type: String },
   address: { type: String },
+  city: { type: String },
   prov: { type: String },
   state: { type: String },
   location: [Number],
