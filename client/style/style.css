@@ -42,6 +42,10 @@
   justify-content: space-between;
 }
 
+.collection-item a {
+  width: 90%
+}
+
 .collection-item:hover {
   background-color: #ccc;
 }
