@@ -89,7 +89,10 @@ class PersonDetail extends Component {
         <div>
           <h3>
             { person.title ? person.title + " ": ""}{person.firstName} {person.lastName}
-            <i className="material-icons pointer" onClick={ () => this.editPerson(person) }>edit</i>
+            &nbsp;
+            <a className="btn-floating btn-small waves-effect waves-light red" onClick={ (e) => e.preventDefault() }>
+              <i className="material-icons pointer" onClick={ () => this.editPerson(person) }>edit</i>
+            </a>
           </h3>
           { (person.contacts && person.contacts.length && person.contacts.length > 0) ? this.renderContactTable() : [] }
           <Link className="btn-floating btn-medium waves-effect waves-light red" to={`/person/${person.id}/contacts/new`}>
