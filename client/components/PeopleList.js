@@ -12,7 +12,7 @@ class PeopleList extends Component {
     super();
     this.state = {
       editPersonDialogOpen: false,
-      personId: null,
+      person: null,
       edit: false
     }
   }
@@ -31,7 +31,7 @@ class PeopleList extends Component {
     return <li className="collection-item" key={x.id}>
       <Link to={`/person/${x.id}`}>{x.firstName} {x.lastName}</Link>
        <i className="material-icons" onClick={ () => this.onDelete(x) }>delete</i>
-       <i className="material-icons" onClick={ () => this.editPerson(x.id) }>edit</i>
+       <i className="material-icons" onClick={ () => this.editPerson(x) }>edit</i>
       </li>
   }
 
@@ -39,16 +39,17 @@ class PeopleList extends Component {
     console.log("new person", this)
     this.setState({
       edit: false,
-      editPersonDialogOpen: true
+      editPersonDialogOpen: true,
+      person: null
     })
   }
 
-  editPerson(id) {
-    console.log("edit person", id)
+  editPerson(person) {
+    console.log("edit person", person)
     this.setState({
       edit: true,
       editPersonDialogOpen: true,
-      personId: id
+      person: person
     })
   }
 
@@ -72,7 +73,7 @@ class PeopleList extends Component {
           open = { this.state.editPersonDialogOpen }
           onClose = { () => this.closeEditDialog() }
           edit = { this.state.edit }
-          personId = { this.state.personId } />
+          person = { this.state.person } />
       </div>
     );
   }

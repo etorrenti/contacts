@@ -12,15 +12,15 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import query from '../queries/fetchPeople';
-import fetchPerson from '../queries/fetchPerson';
 
 export default function EditPersonDialog(props) {
-  console.log("EditPersonDialog", props)
+  console.log("EditPersonDialog", props, this)
 
-  const {open, edit, personId, onClose} = props;
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [title, setTitle] = React.useState("");
+  const {open, edit, person, onClose} = props;
+  const [firstName, setFirstName] = edit ? React.useState(person.firstName) : React.useState("");
+  const [lastName, setLastName] = edit ? React.useState(person.lastName) :  React.useState("");
+
+  const [title, setTitle] = edit ? React.useState(person.title) : React.useState("");
   const [contact, setContact] = React.useState("");
   const [contactType, setContactType] = React.useState("TELEPHONE");
   const [errors, setErrors] = React.useState([]);
@@ -38,14 +38,6 @@ export default function EditPersonDialog(props) {
     onClose();
   }
 
-  // console.log(open)
-
-  if(edit && personId){
-    const { data, loading, error } = useQuery(fetchPerson, {
-      variables: { id: personId },
-    });
-  }
-
   const [addPerson, { addData }] = useMutation(gql `
     mutation AddPerson($firstName: String!, $lastName: String!, $contact: String!, $contactType: String!, $title: String) {
       addPerson(firstName: $firstName, lastName: $lastName, contact: $contact, contactType: $contactType, title: $title) {
@@ -61,6 +53,14 @@ export default function EditPersonDialog(props) {
       }
     }
   `);
+
+  React.useEffect(() => {
+    if(edit && person){
+      setTitle(person.title)
+      setFirstName(person.firstName)
+      setLastName(person.lastName)
+    }
+  }, [edit, person]);
 
   const validate = () => {
     let errs = [];
@@ -131,7 +131,7 @@ export default function EditPersonDialog(props) {
 
     if(edit) {
       mutation = updatePerson;
-      variables.id = props.personId;
+      variables.personId = props.person.id;
     } else {
       variables.contact = contact;
       variables.contactType = contactType;
@@ -148,26 +148,27 @@ export default function EditPersonDialog(props) {
   }
 
   const renderContactField = () => {
-    return <TextField
-      margin="dense"
-      id="contact"
-      error={ hasErrors('contact') }
-      helperText={ errorMessage('contact') }
-      label="Contatto"
-      type="text"
-      required
-      onChange={ (e) => setContact(e.target.value)}
-      fullWidth
-    />
+    if(!edit) {
+      return <TextField
+        margin="dense"
+        id="contact"
+        error={ hasErrors('contact') }
+        helperText={ errorMessage('contact') }
+        label="Contatto"
+        type="text"
+        required
+        onChange={ (e) => setContact(e.target.value)}
+        fullWidth
+      />
+    } else {
+      return null;
+    }
   }
 
   return (
     <Dialog open={open} onClose={handleCancel} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{ edit ? 'Modifica' : 'Crea' } una persona</DialogTitle>
       <DialogContent>
-        {/* <DialogContentText>
-          { props.edit ? 'Modifica' : 'Crea' } una persona
-        </DialogContentText> */}
         <form>
           <TextField
             autoFocus
@@ -179,6 +180,7 @@ export default function EditPersonDialog(props) {
             placeholder="Sig."
             type="text"
             onChange={ (e) => setTitle(e.target.value)}
+            defaultValue= {title}
             fullWidth
           />
           <TextField
@@ -190,6 +192,7 @@ export default function EditPersonDialog(props) {
             type="text"
             required
             onChange={ (e) => setFirstName(e.target.value)}
+            defaultValue= { firstName }
             fullWidth
           />
           <TextField
@@ -201,6 +204,7 @@ export default function EditPersonDialog(props) {
             type="text"
             required
             onChange={ (e) => setLastName(e.target.value)}
+            defaultValue= { lastName }
             fullWidth
           />
 
