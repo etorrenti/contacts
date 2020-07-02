@@ -6,15 +6,24 @@ import {Link} from 'react-router';
 import query from '../queries/fetchPeople';
 
 import EditPersonDialog from './EditPersonDialog'
+import ConfirmationDialog from './ConfirmationDialog'
 
 class PeopleList extends Component {
   constructor() {
     super();
     this.state = {
-      editPersonDialogOpen: false,
+      editDialogOpen: false,
+      confirmDialogOpen: false,
       person: null,
       edit: false
     }
+  }
+
+  askDelete(x){
+    this.setState({
+      person: x,
+      confirmDialogOpen: true
+    });
   }
 
   onDelete(x){
@@ -25,12 +34,17 @@ class PeopleList extends Component {
       refetchQueries: [{query: query}]
     })
     .catch((e) => console.log(e));
+
+    this.setState({
+      confirmDialogOpen: false,
+      person: null
+    })
   }
 
   renderPerson(x) {
     return <li className="collection-item" key={x.id}>
       <Link to={`/person/${x.id}`}>{x.firstName} {x.lastName}</Link>
-       <i className="material-icons" onClick={ () => this.onDelete(x) }>delete</i>
+       <i className="material-icons" onClick={ () => this.askDelete(x) }>delete</i>
        <i className="material-icons" onClick={ () => this.editPerson(x) }>edit</i>
       </li>
   }
@@ -39,7 +53,7 @@ class PeopleList extends Component {
     console.log("new person", this)
     this.setState({
       edit: false,
-      editPersonDialogOpen: true,
+      editDialogOpen: true,
       person: null
     })
   }
@@ -48,15 +62,23 @@ class PeopleList extends Component {
     console.log("edit person", person)
     this.setState({
       edit: true,
-      editPersonDialogOpen: true,
+      editDialogOpen: true,
       person: person
     })
   }
 
   closeEditDialog() {
     this.setState({
-      editPersonDialogOpen: false
+      editDialogOpen: false
     })
+  }
+
+  deletionConfirmMessage(){
+    if(!this.state.person){
+      return null;
+    }
+    const {person} = this.state;
+    return `Vuoi davvero eliminare ${person.firstName} ${person.lastName}?`;
   }
 
   renderOuter(children){
@@ -70,10 +92,19 @@ class PeopleList extends Component {
         </h2>
         {children}
         <EditPersonDialog
-          open = { this.state.editPersonDialogOpen }
+          open = { this.state.editDialogOpen }
           onClose = { () => this.closeEditDialog() }
           edit = { this.state.edit }
           person = { this.state.person } />
+
+        <ConfirmationDialog
+          title = "Conferma eliminazione di persona"
+          open = { this.state.confirmDialogOpen }
+          token = { this.state.person }
+          onYes = { (person) => this.onDelete(person) }
+          onNo = { () => this.setState({confirmDialogOpen: false}) } >
+          { this.deletionConfirmMessage() }
+        </ConfirmationDialog>
       </div>
     );
   }

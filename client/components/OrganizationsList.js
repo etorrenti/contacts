@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import {Link} from 'react-router';
 
 import EditOrganizationDialog from './EditOrganizationDialog'
+import ConfirmationDialog from './ConfirmationDialog'
 
 import query from '../queries/fetchOrganizations';
 
@@ -12,9 +13,17 @@ class OrganizationList extends Component {
     super();
     this.state = {
       editDialogOpen: false,
+      confirmDialogOpen: false,
       organization: null,
       edit: false
     }
+  }
+
+  askDelete(x){
+    this.setState({
+      organization: x,
+      confirmDialogOpen: true
+    });
   }
 
   onDelete(x){
@@ -25,13 +34,18 @@ class OrganizationList extends Component {
       refetchQueries: [{query: query}]
     })
     .catch((e) => console.log(e));
+
+    this.setState({
+      confirmDialogOpen: false,
+      organization: null
+    })
   }
 
   renderOrg(x) {
     return <li className="collection-item" key={x.id}>
       <Link to={`/organization/${x.id}`}>{x.name}</Link>
-       <i onClick={ () => this.onDelete(x) } className="material-icons">delete</i>
-       <i className="material-icons" onClick={ () => this.editOrganization(x) }>edit</i>
+       <i onClick={ () => this.askDelete(x) } className="material-icons">delete</i>
+       <i onClick={ () => this.editOrganization(x) } className="material-icons">edit</i>
     </li>
   }
 
@@ -59,6 +73,14 @@ class OrganizationList extends Component {
     })
   }
 
+  deletionConfirmMessage(){
+    if(!this.state.organization){
+      return null;
+    }
+    const {organization} = this.state;
+    return `Vuoi davvero eliminare ${organization.name}?`;
+  }
+
   renderOuter(children){
     return (
       <div>
@@ -74,6 +96,15 @@ class OrganizationList extends Component {
           onClose = { () => this.closeEditDialog() }
           edit = { this.state.edit }
           organization = { this.state.organization } />
+
+          <ConfirmationDialog
+            title = "Conferma eliminazione di organizzazione"
+            open = { this.state.confirmDialogOpen }
+            token = { this.state.organization }
+            onYes = { (organization) => this.onDelete(organization) }
+            onNo = { () => this.setState({confirmDialogOpen: false}) } >
+            { this.deletionConfirmMessage() }
+          </ConfirmationDialog>
       </div>
     );
   }
