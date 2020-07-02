@@ -20,9 +20,36 @@ FunctionSchema.statics.addContact = function({functionId, contactType, contact})
       if(!func){
         return null;
       }
-      // const ct = new Contact({ type, value })
       const ct = {contactType, value: contact}
+
+      //Check if exists already
+      const i = funct.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+      if(i >= 0){
+        return funct;
+      }
+
       func.contacts.push(ct)
+      return func.save()
+    });
+}
+
+FunctionSchema.statics.updateContact = function({functionId, contactType, contact}) {
+  console.log({functionId, contactType, contact})
+  return this.findById(functionId)
+    .then(func => {
+      if(!func){
+        return null;
+      }
+      const ct = {contactType, value: contact}
+
+      //Check if exists already
+      const i = funct.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+      if(i >= 0){
+        return funct;
+      } else {
+        funct.contacts[i] = ct;
+      }
+
       return func.save()
     });
 }

@@ -17,7 +17,7 @@ import Home from './components/Home'
 import CreateFunction from './components/CreateFunction'
 import CreateFunctionContact from './components/CreateFunctionContact'
 import CreateList from './components/CreateList'
-import CreatePersonContact from './components/CreatePersonContact'
+// import CreatePersonContact from './components/CreatePersonContact'
 import OrganizationDetail from './components/OrganizationDetail'
 import PersonDetail from './components/PersonDetail'
 
@@ -41,7 +41,7 @@ const Root = () => {
         {/* <Route path="/person/new" component={CreatePerson}/> */}
         <Route path="/organization/:id" component={OrganizationDetail}/>
         <Route path="/person/:id" component={PersonDetail}/>
-        <Route path="/person/:id/contacts/new" component={CreatePersonContact}/>
+        {/* <Route path="/person/:id/contacts/new" component={CreatePersonContact}/> */}
         <Route path="/organization/:id/functions/new" component={CreateFunction}/>
         <Route path="/organization/:id/functions/:fId/contacts/new" component={CreateFunctionContact}/>
         <Route path="/lists/new" component={CreateList}/>

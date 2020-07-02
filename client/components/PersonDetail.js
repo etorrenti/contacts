@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 
 import EditPersonDialog from './EditPersonDialog'
+import EditContactDialog from './EditContactDialog'
 import ConfirmationDialog from './ConfirmationDialog'
 
 import fetchPerson from '../queries/fetchPerson'
@@ -13,6 +14,8 @@ class PersonDetail extends Component {
     super();
     this.state = {
       editPersonDialogOpen: false,
+      editContactDialogOpen: false,
+      editContact: false,
       confirmDialogOpen: false,
       contact: null
     }
@@ -24,10 +27,40 @@ class PersonDetail extends Component {
     })
   }
 
+  closeEditContactDialog() {
+    this.setState({
+      editContactDialogOpen: false
+    })
+  }
+
   editPerson() {
     console.log("edit person", this.props.data.person)
     this.setState({
       editPersonDialogOpen: true,
+    })
+  }
+
+  editContact(i) {
+    let {contacts} = this.props.data.person;
+    if(!contacts || !contacts.length || contacts.length <= i){
+      return;
+    }
+
+    let contact = contacts[i];
+    console.log("edit contact", this.props.data.person.id, contact)
+    this.setState({
+      editContactDialogOpen: true,
+      editContact: true,
+      contact: contact
+    })
+  }
+
+  newContact() {
+    console.log("new contact", this.props.data.person.id)
+    this.setState({
+      editContactDialogOpen: true,
+      editContact: false,
+      contact: null
     })
   }
 
@@ -59,10 +92,6 @@ class PersonDetail extends Component {
     .catch((e) => console.log(e));
   }
 
-  onEdit(i) {
-    console.log("On edit", i)
-  }
-
   renderContactTable(){
     let contacts = this.props.data.person.contacts;
     return(
@@ -81,7 +110,7 @@ class PersonDetail extends Component {
               <td>{c.value}</td>
               <td>{c.contactType}</td>
               <td>
-                <i className="material-icons pointer" onClick={() => this.onEdit(i) }>edit</i>
+                <i className="material-icons pointer" onClick={() => this.editContact(i) }>edit</i>
                 <i className="material-icons pointer" onClick={() => this.askDelete(i) }>delete</i>
               </td>
             </tr>
@@ -112,15 +141,23 @@ class PersonDetail extends Component {
             </a>
           </h3>
           { (person.contacts && person.contacts.length && person.contacts.length > 0) ? this.renderContactTable() : [] }
-          <Link className="btn-floating btn-medium waves-effect waves-light red" to={`/person/${person.id}/contacts/new`}>
+
+          <a className="btn-floating btn-medium waves-effect waves-light red" onClick={ () => this.newContact() }>
             <i className="material-icons">add</i>
-          </Link>
+          </a>
 
           <EditPersonDialog
             open = { this.state.editPersonDialogOpen }
             onClose = { () => this.closeEditDialog() }
             edit = { true }
             person = { person } />
+
+          <EditContactDialog
+            open = { this.state.editContactDialogOpen }
+            onClose = { () => this.closeEditContactDialog() }
+            edit = { this.state.editContact }
+            personId={ person.id }
+            contactObj = { this.state.contact } />
 
           <ConfirmationDialog
             title = "Conferma eliminazione di contatto"

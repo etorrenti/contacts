@@ -109,6 +109,17 @@ const mutation = new GraphQLObjectType({
         return Function.addContact({functionId, contact, contactType});
       }
     },
+    updateContactInFunction: {
+      type: FunctionType,
+      args: {
+        functionId: { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parentValue, {functionId, contact, contactType}) {
+        return Function.updateContact({functionId, contact, contactType});
+      }
+    },
     deleteContactInFunction: {
       type: FunctionType,
       args: {
@@ -189,7 +200,42 @@ const mutation = new GraphQLObjectType({
         if(!person.contacts){
           person.contacts = []
         }
+
+        //Check if exists already
+        const i = person.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+        if(i >= 0){
+          return person;
+        }
         person.contacts.push(k);
+        return person.save();
+      }
+    },
+    updateContactInPerson: {
+      type: PersonType,
+      args: {
+        personId : { type: new GraphQLNonNull(GraphQLID) },
+        contact : { type: new GraphQLNonNull(GraphQLString) },
+        contactType : { type: new GraphQLNonNull(GraphQLString) }
+      },
+      async resolve(parentValue, {personId, contact, contactType}) {
+        let person = await Person.findById(personId);
+        if(!person){
+          return null;
+        }
+        let k = {
+          contactType, value: contact
+        }
+        if(!person.contacts){
+          person.contacts = []
+        }
+
+        //Check if exists already
+        const i = person.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+        if(i >= 0){
+          return person;
+        } else {
+          person.contacts[i] = k;
+        }
         return person.save();
       }
     },
