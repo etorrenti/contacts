@@ -3,8 +3,8 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import {Link, hashHistory} from 'react-router';
 
-import OrganizationFunctions from './OrganizationFunctions'
 import EditPersonDialog from './EditPersonDialog'
+import ConfirmationDialog from './ConfirmationDialog'
 
 import fetchPerson from '../queries/fetchPerson'
 
@@ -13,6 +13,8 @@ class PersonDetail extends Component {
     super();
     this.state = {
       editPersonDialogOpen: false,
+      confirmDialogOpen: false,
+      contact: null
     }
   }
 
@@ -29,15 +31,22 @@ class PersonDetail extends Component {
     })
   }
 
-  onDelete(i) {
-    console.log("On delete", i, this)
+  askDelete(i){
     let {contacts} = this.props.data.person;
     if(!contacts || !contacts.length || contacts.length <= i){
       return;
     }
 
     let c = contacts[i];
-    console.log(c)
+
+    this.setState({
+      contact: c,
+      confirmDialogOpen: true
+    });
+  }
+
+  onDelete(c) {
+    console.log("On delete", c, this)
 
     this.props.mutate({
       variables: {
@@ -45,7 +54,7 @@ class PersonDetail extends Component {
         contact: c.value,
         contactType: c.contactType
       },
-      refetchQueries: [{query: fetchPerson}]
+      refetchQueries: [{query: fetchPerson, variables: {id: this.props.params.id}}]
     })
     .catch((e) => console.log(e));
   }
@@ -73,7 +82,7 @@ class PersonDetail extends Component {
               <td>{c.contactType}</td>
               <td>
                 <i className="material-icons pointer" onClick={() => this.onEdit(i) }>edit</i>
-                <i className="material-icons pointer" onClick={() => this.onDelete(i) }>delete</i>
+                <i className="material-icons pointer" onClick={() => this.askDelete(i) }>delete</i>
               </td>
             </tr>
           );
@@ -81,6 +90,14 @@ class PersonDetail extends Component {
         </tbody>
       </table>
     );
+  }
+
+  deletionConfirmMessage(){
+    if(!this.state.contact){
+      return null;
+    }
+    const {contact} = this.state;
+    return `Vuoi davvero eliminare ${contact.value} (${contact.contactType})?`;
   }
 
   renderPerson(person) {
@@ -104,6 +121,15 @@ class PersonDetail extends Component {
             onClose = { () => this.closeEditDialog() }
             edit = { true }
             person = { person } />
+
+          <ConfirmationDialog
+            title = "Conferma eliminazione di contatto"
+            open = { this.state.confirmDialogOpen }
+            token = { this.state.contact }
+            onYes = { (contact) => this.onDelete(contact) }
+            onNo = { () => this.setState({confirmDialogOpen: false}) } >
+            { this.deletionConfirmMessage() }
+          </ConfirmationDialog>
         </div>
       );
     } else {

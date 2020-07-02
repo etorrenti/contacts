@@ -34,8 +34,8 @@ class CreatePersonContact extends Component {
     const {person} = this.props.data
     let children = [];
     if(person){
-      children = [<h3>Crea nuovo contatto per {person.firstName} {person.lastName}</h3>,
-      <form onSubmit={this.onSubmit.bind(this)}>
+      children = [<h3 key="title">Crea nuovo contatto per {person.firstName} {person.lastName}</h3>,
+      <form key="form" onSubmit={this.onSubmit.bind(this)}>
         <label>Contatto:</label>
         <input onChange={event => this.setState({value: event.target.value})} value={this.state.value}/>
         <input id="submit_handle" type="submit" style={{display: "none"}} />
