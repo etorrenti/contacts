@@ -23,9 +23,9 @@ FunctionSchema.statics.addContact = function({functionId, contactType, contact})
       const ct = {contactType, value: contact}
 
       //Check if exists already
-      const i = funct.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+      const i = func.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
       if(i >= 0){
-        return funct;
+        return func;
       }
 
       func.contacts.push(ct)
@@ -33,7 +33,7 @@ FunctionSchema.statics.addContact = function({functionId, contactType, contact})
     });
 }
 
-FunctionSchema.statics.updateContact = function({functionId, contactType, contact}) {
+FunctionSchema.statics.updateContact = function({functionId, id, contactType, contact}) {
   console.log({functionId, contactType, contact})
   return this.findById(functionId)
     .then(func => {
@@ -43,10 +43,8 @@ FunctionSchema.statics.updateContact = function({functionId, contactType, contac
       const ct = {contactType, value: contact}
 
       //Check if exists already
-      const i = funct.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+      const i = person.contacts.findIndex(x => x.id == contactId)
       if(i >= 0){
-        return funct;
-      } else {
         funct.contacts[i] = ct;
       }
 

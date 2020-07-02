@@ -39,17 +39,17 @@ export default function EditContactDialog(props) {
     mutation AddContactToPerson($personId: ID!, $contact: String!, $contactType: String!){
       addContactToPerson(personId: $personId, contact: $contact, contactType: $contactType){
         id, contacts{
-          contactType, value
+          id, contactType, value
         }
       }
     }
   `);
 
   const [updateContact, {updateData}] = useMutation(gql`
-    mutation UpdateContactInPerson($personId: ID!, $contact: String!, $contactType: String!){
-      updateContactInPerson(personId: $personId, contact: $contact, contactType: $contactType){
+    mutation UpdateContactInPerson($personId: ID!, $id: ID!, $contact: String!, $contactType: String!){
+      updateContactInPerson(personId: $personId, id: $id, contact: $contact, contactType: $contactType){
         id, contacts{
-          contactType, value
+          id, contactType, value
         }
       }
     }
@@ -117,6 +117,7 @@ export default function EditContactDialog(props) {
 
     if(edit) {
       mutation = updateContact;
+      variables.id = contactObj.id;
     }
 
     mutation({ variables,

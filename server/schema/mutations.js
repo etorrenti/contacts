@@ -112,6 +112,7 @@ const mutation = new GraphQLObjectType({
     updateContactInFunction: {
       type: FunctionType,
       args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
         functionId: { type: new GraphQLNonNull(GraphQLID) },
         contact : { type: new GraphQLNonNull(GraphQLString) },
         contactType : { type: new GraphQLNonNull(GraphQLString) }
@@ -214,10 +215,11 @@ const mutation = new GraphQLObjectType({
       type: PersonType,
       args: {
         personId : { type: new GraphQLNonNull(GraphQLID) },
+        id : { type: new GraphQLNonNull(GraphQLID) },
         contact : { type: new GraphQLNonNull(GraphQLString) },
         contactType : { type: new GraphQLNonNull(GraphQLString) }
       },
-      async resolve(parentValue, {personId, contact, contactType}) {
+      async resolve(parentValue, {id, personId, contact, contactType}) {
         let person = await Person.findById(personId);
         if(!person){
           return null;
@@ -230,10 +232,8 @@ const mutation = new GraphQLObjectType({
         }
 
         //Check if exists already
-        const i = person.contacts.findIndex(x => x.value == contact && x.contactType == contactType)
+        const i = person.contacts.findIndex(x => x.id == id)
         if(i >= 0){
-          return person;
-        } else {
           person.contacts[i] = k;
         }
         return person.save();

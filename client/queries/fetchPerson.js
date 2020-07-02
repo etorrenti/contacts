@@ -4,7 +4,7 @@ export default gql`
 query Person($id: ID!){
   person(id: $id){
     id, firstName, lastName, title, contacts{
-      contactType, value
+      id, contactType, value
     }
   }
 }

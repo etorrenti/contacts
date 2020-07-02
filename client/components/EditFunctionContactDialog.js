@@ -46,10 +46,10 @@ export default function EditFunctionContactDialog(props) {
   `);
 
   const [updateContact, {updateData}] = useMutation(gql`
-    mutation UpdateContactToFunction($functionId: ID!, $contact: String!, $contactType: String!){
-      updateContactInFunction(functionId: $functionId, contact: $contact, contactType: $contactType){
+    mutation UpdateContactToFunction($functionId: ID!, $id: ID!, $contact: String!, $contactType: String!){
+      updateContactInFunction(functionId: $functionId, id: $id, contact: $contact, contactType: $contactType){
         id, contacts{
-          contactType, value
+          id, contactType, value
         }
       }
     }
@@ -117,6 +117,7 @@ export default function EditFunctionContactDialog(props) {
 
     if(edit) {
       mutation = updateContact;
+      variables.id = contactObj.id;
     }
 
     mutation({ variables,
