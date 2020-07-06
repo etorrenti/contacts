@@ -12,7 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import AddRoleDialog from './AddRoleDialog'
+import EditRoleDialog from './EditRoleDialog'
 import ConfirmationDialog from './ConfirmationDialog'
 
 import query from '../queries/fetchOrganization'
@@ -123,7 +123,7 @@ class OrganizationPeople extends Component {
           </a>
         </h4>
         {children}
-        <AddRoleDialog open={ this.state.addRoleOpen }
+        <EditRoleDialog open={ this.state.addRoleOpen }
           addCallback= { (x) => this.handleAddRole(x)}
           cancelCallback= { () => this.closeAddRoleDialog()}
           people={ this.props.data.people }
