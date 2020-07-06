@@ -5,9 +5,39 @@ import {Link, hashHistory} from 'react-router';
 import query from '../queries/fetchOrganization'
 import { compose } from 'recompose'
 
+import ConfirmationDialog from './ConfirmationDialog'
+
 class OrganizationFunctionDetail extends Component {
+  constructor() {
+    super();
+    this.state = {
+      editFunctionDialogOpen: false,
+      editContactDialogOpen: false,
+      confirmFunctionDialogOpen: false,
+      confirmContactDialogOpen: false,
+      theFunction: null,
+      contact: -1,
+      editFunction: false,
+      editContact: false
+    }
+  }
+
+  askDeleteFunction(x){
+    this.setState({
+      theFunction: x,
+      confirmFunctionDialogOpen: true
+    });
+  }
+
+  askDeleteContact(x){
+    this.setState({
+      contact: x,
+      confirmContactDialogOpen: true
+    });
+  }
+
   onDelete(x) {
-    this.props.mutate({
+    this.props.deleteFunction({
       variables: {
         functionId: x.id,
         organizationId: this.props.organizationId
@@ -17,17 +47,20 @@ class OrganizationFunctionDetail extends Component {
       }}]
     })
     .catch((e) => console.log(e));
+
+    this.setState({
+      confirmFunctionDialogOpen: false,
+      theFunction: null
+    })
   }
 
   onDeleteContact(i) {
-    console.log("On delete", i, this)
     let {contacts} = this.props.data;
     if(!contacts || !contacts.length || contacts.length <= i){
       return;
     }
 
     let c = contacts[i];
-    console.log(c)
 
     this.props.deleteContact({
       variables: {
@@ -40,12 +73,17 @@ class OrganizationFunctionDetail extends Component {
       }}]
     })
     .catch((e) => console.log(e));
+
+    this.setState({
+      confirmContactDialogOpen: false,
+      contact: -1
+    })
   }
 
   renderContact(contact, index){
     return <li className="collection-item" key={`contact_${this.props.data.id}_${index}`}>
       { contact.value } ({ contact.contactType })
-      <i onClick={ () => this.onDeleteContact(index)} className="material-icons pointer">delete</i>
+      <i onClick={ () => this.askDeleteContact(index)} className="material-icons pointer">delete</i>
     </li>
   }
 
@@ -58,6 +96,21 @@ class OrganizationFunctionDetail extends Component {
     return <ul className="collection contacts">
       { contacts.map( (c, i) => this.renderContact(c, i)) }
     </ul>
+  }
+
+  functionDeletionConfirmMessage() {
+    if(!this.state.theFunction){
+      return ""
+    }
+    return `Vuoi eliminare la funzione ${this.state.theFunction.name}?`;
+  }
+
+  contactDeletionConfirmMessage() {
+    if( this.state.contact < 0 || this.state.contact >= this.props.data.contacts.length){
+      return ""
+    }
+    const k = this.props.data.contacts[this.state.contact];
+    return `Vuoi eliminare ${k.value}(${k.contactType})?`;
   }
 
   render() {
@@ -74,14 +127,32 @@ class OrganizationFunctionDetail extends Component {
           { this.renderContacts() }
         </div>
         <div className="card-action">
-          <i onClick={ () => this.onDelete(this.props.data)} className="material-icons pointer">delete</i>
+          <i onClick={ () => this.askDeleteFunction(this.props.data)} className="material-icons pointer">delete</i>
         </div>
+        <ConfirmationDialog
+          id = "confirmFunctionDialog"
+          title = "Conferma eliminazione di funzione"
+          open = { this.state.confirmFunctionDialogOpen }
+          token = { this.state.theFunction }
+          onYes = { (theFunction) => this.onDelete(theFunction) }
+          onNo = { () => this.setState({confirmFunctionDialogOpen: false}) } >
+          { this.functionDeletionConfirmMessage() }
+        </ConfirmationDialog>
+        <ConfirmationDialog
+          id = "confirmContactDialog"
+          title = "Conferma eliminazione di contatto"
+          open = { this.state.confirmContactDialogOpen }
+          token = { this.state.contact }
+          onYes = { (index) => this.onDeleteContact(index) }
+          onNo = { () => this.setState({confirmContactDialogOpen: false}) } >
+          { this.contactDeletionConfirmMessage() }
+        </ConfirmationDialog>
       </div>
     );
   }
 }
 
-const mutation = gql`
+const deleteFunction = gql`
     mutation DeleteFunction($organizationId: ID!, $functionId: ID!){
     deleteFunction(organizationId: $organizationId, functionId: $functionId){
       id, name
@@ -99,5 +170,5 @@ const deleteContact = gql`
 `
 
 export default compose(
-  graphql(mutation),
+  graphql(deleteFunction, {name: 'deleteFunction'}),
   graphql(deleteContact, {name: 'deleteContact'}))(OrganizationFunctionDetail);

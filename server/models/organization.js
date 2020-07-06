@@ -92,7 +92,6 @@ OrganizationSchema.statics.deleteRole = function({organizationId, title, personI
         }
         return false;
       });
-      console.log("zzzzz", i)
 
       let role = null;
       if(i >= 0){

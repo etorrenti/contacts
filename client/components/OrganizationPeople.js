@@ -13,6 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 import AddRoleDialog from './AddRoleDialog'
+import ConfirmationDialog from './ConfirmationDialog'
 
 import query from '../queries/fetchOrganization'
 import peopleQuery from '../queries/fetchPeople'
@@ -21,8 +22,17 @@ class OrganizationPeople extends Component {
   constructor(){
     super()
     this.state = {
-      addRoleOpen: false
+      addRoleOpen: false,
+      confirmDialogOpen: false,
+      person: null
     }
+  }
+
+  askDelete(x){
+    this.setState({
+      person: x,
+      confirmDialogOpen: true
+    });
   }
 
   addPerson(e){
@@ -46,7 +56,7 @@ class OrganizationPeople extends Component {
       <TableCell>{ x.title }</TableCell>
       <TableCell>{ this.renderRoleOwner(x) }</TableCell>
       <TableCell>
-        <i onClick={ () => this.deleteRole(x) } className="material-icons pointer">delete</i>
+        <i onClick={ () => this.askDelete(x) } className="material-icons pointer">delete</i>
       </TableCell>
     </TableRow>
   }
@@ -80,12 +90,25 @@ class OrganizationPeople extends Component {
       }}]
     })
     .catch((e) => console.log(e));
+
+    this.setState({
+      confirmDialogOpen: false,
+      person: null
+    })
   }
 
   closeAddRoleDialog(){
     this.setState({
       addRoleOpen: false
     })
+  }
+
+  deletionConfirmMessage(){
+    if(!this.state.person){
+      return null;
+    }
+    const {person} = this.state;
+    return `Vuoi davvero eliminare ${person.title}?`;
   }
 
   renderOuter(children){
@@ -105,6 +128,14 @@ class OrganizationPeople extends Component {
           cancelCallback= { () => this.closeAddRoleDialog()}
           people={ this.props.data.people }
         />
+        <ConfirmationDialog
+          title = "Conferma eliminazione di ruolo"
+          open = { this.state.confirmDialogOpen }
+          token = { this.state.person }
+          onYes = { (person) => this.deleteRole(person) }
+          onNo = { () => this.setState({confirmDialogOpen: false}) } >
+          { this.deletionConfirmMessage() }
+        </ConfirmationDialog>
       </div>
     );
   }

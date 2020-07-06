@@ -5,7 +5,7 @@ query Organization($id: ID!){
   organization(id: $id){
     id, description, name, address, city, prov, state, location, functions {
       id, name, description, contacts{
-        contactType, value
+        id, contactType, value
       }
     },
     roles {
