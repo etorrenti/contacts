@@ -14,8 +14,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import query from '../queries/fetchPeople';
 
 export default function EditPersonDialog(props) {
-  console.log("EditPersonDialog", props)
-
   const {open, edit, person, onClose} = props;
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -146,6 +144,8 @@ export default function EditPersonDialog(props) {
       // resetFields();
     })
     .catch(err => console.log(err));
+
+    resetFields();
   }
 
   const renderContactField = () => {

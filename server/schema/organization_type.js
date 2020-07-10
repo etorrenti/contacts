@@ -28,6 +28,7 @@ const OrganizationType = new GraphQLObjectType({
     roles: {
       type: new GraphQLList(RoleType),
       resolve(parentValue, roles){
+        // console.log(parentValue, roles)
         return Organization.findRoles(parentValue.id)
       }
     }

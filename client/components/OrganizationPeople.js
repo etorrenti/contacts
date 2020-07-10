@@ -22,7 +22,8 @@ class OrganizationPeople extends Component {
   constructor(){
     super()
     this.state = {
-      addRoleOpen: false,
+      editRoleDialogOpen: false,
+      editRole: false,
       confirmDialogOpen: false,
       person: null
     }
@@ -38,7 +39,18 @@ class OrganizationPeople extends Component {
   addPerson(e){
     e.preventDefault()
     this.setState({
-      addRoleOpen: true
+      editRoleDialogOpen: true,
+      person: null,
+      editRole: false
+    })
+  }
+
+  editRole(x) {
+    console.log("Edit role", x)
+    this.setState({
+      editRoleDialogOpen: true,
+      editRole: true,
+      person: x
     })
   }
 
@@ -56,25 +68,10 @@ class OrganizationPeople extends Component {
       <TableCell>{ x.title }</TableCell>
       <TableCell>{ this.renderRoleOwner(x) }</TableCell>
       <TableCell>
+        <i onClick={ () => this.editRole(x) } className="material-icons pointer">edit</i>
         <i onClick={ () => this.askDelete(x) } className="material-icons pointer">delete</i>
       </TableCell>
     </TableRow>
-  }
-
-  handleAddRole(x) {
-    console.log("Add role", x)
-    this.closeAddRoleDialog()
-    this.props.addRole({
-      variables: {
-        title: x.role,
-        personId: x.person ? x.person.id : null,
-        organizationId: this.props.organizationId
-      },
-      refetchQueries: [{query: query, variables: {
-        id: this.props.organizationId
-      }}]
-    })
-    .catch((e) => console.log(e));
   }
 
   deleteRole(role){
@@ -99,7 +96,7 @@ class OrganizationPeople extends Component {
 
   closeAddRoleDialog(){
     this.setState({
-      addRoleOpen: false
+      editRoleDialogOpen: false
     })
   }
 
@@ -123,10 +120,13 @@ class OrganizationPeople extends Component {
           </a>
         </h4>
         {children}
-        <EditRoleDialog open={ this.state.addRoleOpen }
-          addCallback= { (x) => this.handleAddRole(x)}
-          cancelCallback= { () => this.closeAddRoleDialog()}
+        <EditRoleDialog
+          open={ this.state.editRoleDialogOpen }
+          edit = { this.state.editRole }
+          onClose = { () => this.closeAddRoleDialog()}
           people={ this.props.data.people }
+          rolePerson = {this.state.person}
+          organizationId = {this.props.organizationId}
         />
         <ConfirmationDialog
           title = "Conferma eliminazione di ruolo"
@@ -169,20 +169,6 @@ class OrganizationPeople extends Component {
   }
 }
 
-const addRole = gql`
-  mutation AddRole($organizationId: ID!, $title: String!, $personId: ID) {
-    addRole(organizationId: $organizationId, title: $title, personId: $personId) {
-      roles {
-        title
-        person {
-          id
-          firstName
-          lastName
-        }
-      }
-    }
-  }
-`
 const deleteRole = gql`
   mutation DeleteRole($organizationId: ID!, $title: String!, $personId: ID) {
     deleteRole(organizationId: $organizationId, title: $title, personId: $personId) {
@@ -199,5 +185,4 @@ const deleteRole = gql`
 `
 
 export default compose(
-  graphql(addRole, {name: 'addRole'}),
   graphql(deleteRole, {name: 'deleteRole'}))(OrganizationPeople);

@@ -10,16 +10,16 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import query from '../queries/fetchOrganization'
 
 export default function EditRoleDialog(props) {
-
-  const {open, edit, rolePerson, onClose} = props
-  const [role, setRole] = React.useState("");
+  const {open, edit, rolePerson, onClose, organizationId} = props
+  const [title, setTitle] = React.useState("");
   const [person, setPerson] = React.useState(null);
   const [errors, setErrors] = React.useState([]);
 
   const resetFields = () => {
-    setRole("")
+    setTitle("")
     setPerson(null)
     setErrors([])
   }
@@ -30,7 +30,7 @@ export default function EditRoleDialog(props) {
 
   React.useEffect(() => {
     if(edit && rolePerson){
-      setRole(rolePerson.title)
+      setTitle(rolePerson.title)
       setPerson(rolePerson.person)
     } else {
       resetFields();
@@ -40,9 +40,9 @@ export default function EditRoleDialog(props) {
   const validate = () => {
     let errs = [];
 
-    if(!(role && role.length && role.length && role.length > 0)){
+    if(!(title && title.length && title.length && title.length > 0)){
       errs.push({
-        field: "role",
+        field: "title",
         message: "Scegli un ruolo"
       })
     }
@@ -65,46 +65,107 @@ export default function EditRoleDialog(props) {
   }
 
   const handleCancel = () => {
-    if(props.cancelCallback) {
-      props.cancelCallback();
-    }
+    resetFields()
+    fireClose()
   };
 
-  const handleAdd = () => {
-    const ok = validate();
+  // const handleAdd = () => {
+  //   const ok = validate();
+  //
+  //   if(ok && props.addCallback) {
+  //     props.addCallback({role, person});
+  //   }
+  // };
 
-    if(ok && props.addCallback) {
-      props.addCallback({role, person});
+  const [addRole, {addData}] = useMutation(gql`
+    mutation AddRole($organizationId: ID!, $title: String!, $personId: ID) {
+      addRole(organizationId: $organizationId, title: $title, personId: $personId) {
+        roles {
+          title
+          person {
+            id
+            firstName
+            lastName
+          }
+        }
+      }
     }
-  };
+  `);
+
+  const [updateRole, {updateData}] = useMutation(gql`
+    mutation UpdateRole($personId: ID, $organizationId: ID!, $roleId: ID!, $title: String!) {
+      updateRole(roleId: $roleId, organizationId: $organizationId, title: $title, personId: $personId) {
+        id
+        roles {
+          id
+          title
+          person {
+            id
+          }
+        }
+      }
+    }
+  `);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if(!validate()){
+      return;
+    }
+
+    let mutation = addRole;
+
+    let variables = {
+      organizationId, title
+    }
+
+    variables.personId = person ? person.id : null;
+
+    if(edit) {
+      mutation = updateRole;
+      variables.roleId = rolePerson.id;
+
+      console.log(variables)
+    }
+
+    mutation({ variables,
+      refetchQueries: [{query: query, variables: {id: organizationId}}]
+    })
+    .then(() => {
+      fireClose();
+    })
+    .catch(err => console.log(err));
+
+    resetFields();
+  }
 
   return (
-    <Dialog open={props.open} onClose={handleCancel} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Modifica Ruolo</DialogTitle>
+    <Dialog open={open} onClose={handleCancel} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">{ edit ? 'Modifica' : 'Crea' } un ruolo</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Crea un ruolo nell'organizzazione
-        </DialogContentText>
         <form>
           <TextField
             autoFocus
             margin="dense"
-            id="role"
-            error={ hasErrors('role') }
-            helperText={ errorMessage('role') }
+            id="title"
+            error={ hasErrors('title') }
+            helperText={ errorMessage('title') }
             label="Ruolo"
             type="text"
             required
-            onChange={ (e) => setRole(e.target.value)}
+            onChange={ (e) => setTitle(e.target.value)}
+            defaultValue= { title }
             fullWidth
           />
           <Autocomplete
             id="autocomplete"
             options={ props.people || [] }
             getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+            getOptionSelected = {(option, value) => option.id == value.id}
             style={{ width: '450px' }}
             renderInput={(params) => <TextField {...params} label="Titolare (opzionale)" variant="outlined" />}
             onChange={ (e, value) => setPerson(value)}
+            value = { person }
           />
         </form>
       </DialogContent>
@@ -112,8 +173,8 @@ export default function EditRoleDialog(props) {
         <Button onClick={handleCancel} color="primary">
           Annulla
         </Button>
-        <Button onClick={handleAdd} color="primary">
-          Inserisci
+        <Button onClick={onSubmit} color="primary">
+          { edit ? 'Modifica' : 'Inserisci'}
         </Button>
       </DialogActions>
     </Dialog>

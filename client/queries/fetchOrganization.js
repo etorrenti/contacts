@@ -9,7 +9,7 @@ query Organization($id: ID!){
       }
     },
     roles {
-      title, person {
+      id, title, person {
         id, firstName, lastName
       }
     }
