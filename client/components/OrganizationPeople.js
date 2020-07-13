@@ -57,9 +57,14 @@ class OrganizationPeople extends Component {
   renderRoleOwner(role){
     const {person} = role;
     if(person) {
-      return `${person.firstName} ${person.lastName}`;
+      // /person/:id
+      return <span>
+        <Link to={"/person/" + person.id}>
+        {`${person.firstName} ${person.lastName}`}
+        </Link>
+      </span>;
     } else {
-      return "-";
+      return <span> - </span>;
     }
   }
 
