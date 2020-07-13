@@ -14,12 +14,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import query from '../queries/fetchPerson';
+import query from '../queries/fetchOrganization';
 
 export default function EditFunctionContactDialog(props) {
   console.log("EditFunctionContactDialog", props)
 
-  const {open, edit, contactObj, functionId, onClose} = props;
+  const {open, edit, contactObj, functionId, organizationId, onClose} = props;
   const [value, setValue] = React.useState("");
   const [contactType, setContactType] = React.useState("TELEPHONE");
   const [errors, setErrors] = React.useState([]);
@@ -46,8 +46,8 @@ export default function EditFunctionContactDialog(props) {
   `);
 
   const [updateContact, {updateData}] = useMutation(gql`
-    mutation UpdateContactToFunction($functionId: ID!, $id: ID!, $contact: String!, $contactType: String!){
-      updateContactInFunction(functionId: $functionId, id: $id, contact: $contact, contactType: $contactType){
+    mutation UpdateContactToFunction($functionId: ID!, $contactId: ID!, $contact: String!, $contactType: String!){
+      updateContactInFunction(functionId: $functionId, contactId: $contactId, contact: $contact, contactType: $contactType){
         id, contacts{
           id, contactType, value
         }
@@ -111,17 +111,17 @@ export default function EditFunctionContactDialog(props) {
     let mutation = addContact;
 
     let variables = {
-      contactType, personId
+      contactType, functionId
     }
     variables.contact = value;
 
     if(edit) {
       mutation = updateContact;
-      variables.id = contactObj.id;
+      variables.contactId = contactObj.id;
     }
 
     mutation({ variables,
-      refetchQueries: [{query: query, variables: {id: props.personId}}]
+      refetchQueries: [{query: query, variables: {id: organizationId}}]
     })
     .then(() => {
       fireClose();

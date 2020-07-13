@@ -7,6 +7,7 @@ import { compose } from 'recompose'
 
 import ConfirmationDialog from './ConfirmationDialog'
 import EditFunctionDialog from './EditFunctionDialog'
+import EditFunctionContactDialog from './EditFunctionContactDialog'
 
 class OrganizationFunctionDetail extends Component {
   constructor() {
@@ -17,7 +18,8 @@ class OrganizationFunctionDetail extends Component {
       confirmFunctionDialogOpen: false,
       confirmContactDialogOpen: false,
       theFunction: null,
-      contact: -1,
+      contactIndex: -1,
+      contact: null,
       editFunction: false,
       editContact: false
     }
@@ -30,9 +32,9 @@ class OrganizationFunctionDetail extends Component {
     });
   }
 
-  askDeleteContact(x){
+  askDeleteContact(i){
     this.setState({
-      contact: x,
+      contactIndex: i,
       confirmContactDialogOpen: true
     });
   }
@@ -53,9 +55,31 @@ class OrganizationFunctionDetail extends Component {
     });
   }
 
+  addContact(){
+    this.setState({
+      editContactDialogOpen: true,
+      editContact: false,
+      contact: null
+    });
+  }
+
+  editContact(x) {
+    this.setState({
+      editContactDialogOpen: true,
+      editContact: true,
+      contact: x
+    });
+  }
+
   closeEditFunctionDialog() {
     this.setState({
       editFunctionDialogOpen: false
+    })
+  }
+
+  closeEditContactDialog() {
+    this.setState({
+      editContactDialogOpen: false
     })
   }
 
@@ -105,8 +129,11 @@ class OrganizationFunctionDetail extends Component {
 
   renderContact(contact, index){
     return <li className="collection-item" key={`contact_${this.props.data.id}_${index}`}>
-      { contact.value } ({ contact.contactType })
-      <i onClick={ () => this.askDeleteContact(index)} className="material-icons pointer">delete</i>
+      <span>{ contact.value } ({ contact.contactType })</span>
+      <span style={{float: 'right'}}>
+        <i onClick={ () => this.askDeleteContact(index)} className="material-icons pointer">delete</i>
+        <i onClick={ () => this.editContact(contact)} className="material-icons pointer">edit</i>
+      </span>
     </li>
   }
 
@@ -129,11 +156,11 @@ class OrganizationFunctionDetail extends Component {
   }
 
   contactDeletionConfirmMessage() {
-    if( this.state.contact < 0 || this.state.contact >= this.props.data.contacts.length){
+    if(this.state.contactIndex < 0 || this.state.contactIndex >= this.props.data.contacts.length){
       return ""
     }
-    const k = this.props.data.contacts[this.state.contact];
-    return `Vuoi eliminare ${k.value}(${k.contactType})?`;
+    const k = this.props.data.contacts[this.state.contactIndex];
+    return `Vuoi eliminare ${k.value} (${k.contactType})?`;
   }
 
   render() {
@@ -142,10 +169,10 @@ class OrganizationFunctionDetail extends Component {
         <div className="card-content">
           <span className="card-title">
             {this.props.data.name} &nbsp;
-            <Link className="btn-floating btn-small waves-effect waves-light red"
-              to={`/organization/${this.props.organizationId}/functions/${this.props.data.id}/contacts/new`}>
+            <a className="btn-floating btn-small waves-effect waves-light red"
+              onClick={ () => this.addContact() }>
               <i className="material-icons">add</i>
-            </Link>
+            </a>
           </span>
           { this.renderContacts() }
         </div>
@@ -166,7 +193,7 @@ class OrganizationFunctionDetail extends Component {
           id = "confirmContactDialog"
           title = "Conferma eliminazione di contatto"
           open = { this.state.confirmContactDialogOpen }
-          token = { this.state.contact }
+          token = { this.state.contactIndex }
           onYes = { (index) => this.onDeleteContact(index) }
           onNo = { () => this.setState({confirmContactDialogOpen: false}) } >
           { this.contactDeletionConfirmMessage() }
@@ -177,6 +204,13 @@ class OrganizationFunctionDetail extends Component {
           edit = { this.state.editFunction }
           organizationId = { this.props.organizationId }
           funct = { this.state.theFunction } />
+        <EditFunctionContactDialog
+          open = { this.state.editContactDialogOpen }
+          onClose = { () => this.closeEditContactDialog() }
+          edit = { this.state.editContact }
+          functionId = { this.props.data.id }
+          organizationId = { this.props.organizationId }
+          contactObj = { this.state.contact } />
       </div>
     );
   }

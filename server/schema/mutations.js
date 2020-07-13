@@ -136,13 +136,13 @@ const mutation = new GraphQLObjectType({
     updateContactInFunction: {
       type: FunctionType,
       args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
         functionId: { type: new GraphQLNonNull(GraphQLID) },
+        contactId: { type: new GraphQLNonNull(GraphQLID) },
         contact : { type: new GraphQLNonNull(GraphQLString) },
         contactType : { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve(parentValue, {functionId, contact, contactType}) {
-        return Function.updateContact({functionId, contact, contactType});
+      resolve(parentValue, {functionId, contactId, contact, contactType}) {
+        return Function.updateContact({functionId, contactId, contact, contactType});
       }
     },
     deleteContactInFunction: {

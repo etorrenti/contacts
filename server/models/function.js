@@ -33,8 +33,7 @@ FunctionSchema.statics.addContact = function({functionId, contactType, contact})
     });
 }
 
-FunctionSchema.statics.updateContact = function({functionId, id, contactType, contact}) {
-  console.log({functionId, contactType, contact})
+FunctionSchema.statics.updateContact = function({functionId, contactId, contactType, contact}) {
   return this.findById(functionId)
     .then(func => {
       if(!func){
@@ -43,9 +42,9 @@ FunctionSchema.statics.updateContact = function({functionId, id, contactType, co
       const ct = {contactType, value: contact}
 
       //Check if exists already
-      const i = person.contacts.findIndex(x => x.id == contactId)
+      const i = func.contacts.findIndex(x => x.id == contactId)
       if(i >= 0){
-        funct.contacts[i] = ct;
+        func.contacts[i] = ct;
       }
 
       return func.save()
