@@ -36,6 +36,28 @@ OrganizationSchema.statics.addFunction = function({organizationId, name, descrip
     });
 }
 
+OrganizationSchema.statics.updateFunction = function({functionId, organizationId, name, description}) {
+  const Function = mongoose.model('function');
+  return Promise.all([this.findById(organizationId), Function.findById(functionId)])
+    .then(([org, funct]) => {
+      if(!org || !funct){
+        return null;
+      }
+
+      // funct = {... name, description, org }
+      funct.name = name;
+      funct.description = description;
+      funct.organization = org.id;
+
+      const i = org.functions.findIndex(f => mongoose.Types.ObjectId(f.id).equals(mongoose.Types.ObjectId(functionId)))
+      if(i >= 0) {
+        org.functions[i] = funct;
+      }
+      return Promise.all([funct.save(), org.save()])
+        .then(([funct, org]) => funct);
+    });
+}
+
 OrganizationSchema.statics.addRole = function({organizationId, title, personId}) {
   const Person = mongoose.model('person');
   const Role = mongoose.model('role');

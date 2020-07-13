@@ -4,9 +4,28 @@ import gql from 'graphql-tag';
 import {Link} from 'react-router';
 
 import OrganizationFunctionDetail from './OrganizationFunctionDetail'
+import EditFunctionDialog from './EditFunctionDialog'
 import query from '../queries/fetchOrganization'
 
 class OrganizationFunctions extends Component {
+  constructor() {
+    super();
+    this.state = {
+      editFunctionDialogOpen: false
+    }
+  }
+
+  editFunction(x) {
+    this.setState({
+      editFunctionDialogOpen: true
+    });
+  }
+
+  closeEditFunctionDialog() {
+    this.setState({
+      editFunctionDialogOpen: false
+    })
+  }
 
   renderFunction(x) {
     return <div className="col s12 m4" key={x.id}>
@@ -20,9 +39,15 @@ class OrganizationFunctions extends Component {
         <h4>
           Funzioni
           &nbsp;
-          <Link to={`/organization/${this.props.organizationId}/functions/new`} className="btn-floating btn-small waves-effect waves-light red"><i className="material-icons">add</i></Link>
+          <a onClick={ () => this.editFunction() } className="btn-floating btn-small waves-effect waves-light red"><i className="material-icons">add</i></a>
         </h4>
         {children}
+        <EditFunctionDialog
+          open = { this.state.editFunctionDialogOpen }
+          onClose = { () => this.closeEditFunctionDialog() }
+          edit = { false }
+          organizationId = { this.props.organizationId }
+          funct = { null } />
       </div>
     );
   }

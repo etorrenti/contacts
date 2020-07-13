@@ -6,6 +6,7 @@ import query from '../queries/fetchOrganization'
 import { compose } from 'recompose'
 
 import ConfirmationDialog from './ConfirmationDialog'
+import EditFunctionDialog from './EditFunctionDialog'
 
 class OrganizationFunctionDetail extends Component {
   constructor() {
@@ -34,6 +35,28 @@ class OrganizationFunctionDetail extends Component {
       contact: x,
       confirmContactDialogOpen: true
     });
+  }
+
+  addFunction(){
+    this.setState({
+      editFunctionDialogOpen: true,
+      editFunction: false,
+      theFunction: null
+    });
+  }
+
+  editFunction(x) {
+    this.setState({
+      editFunctionDialogOpen: true,
+      editFunction: true,
+      theFunction: x
+    });
+  }
+
+  closeEditFunctionDialog() {
+    this.setState({
+      editFunctionDialogOpen: false
+    })
   }
 
   onDelete(x) {
@@ -128,6 +151,7 @@ class OrganizationFunctionDetail extends Component {
         </div>
         <div className="card-action">
           <i onClick={ () => this.askDeleteFunction(this.props.data)} className="material-icons pointer">delete</i>
+          <i onClick={ () => this.editFunction(this.props.data)} className="material-icons pointer">edit</i>
         </div>
         <ConfirmationDialog
           id = "confirmFunctionDialog"
@@ -147,6 +171,12 @@ class OrganizationFunctionDetail extends Component {
           onNo = { () => this.setState({confirmContactDialogOpen: false}) } >
           { this.contactDeletionConfirmMessage() }
         </ConfirmationDialog>
+        <EditFunctionDialog
+          open = { this.state.editFunctionDialogOpen }
+          onClose = { () => this.closeEditFunctionDialog() }
+          edit = { this.state.editFunction }
+          organizationId = { this.props.organizationId }
+          funct = { this.state.theFunction } />
       </div>
     );
   }

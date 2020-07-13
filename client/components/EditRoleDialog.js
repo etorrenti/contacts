@@ -69,14 +69,6 @@ export default function EditRoleDialog(props) {
     fireClose()
   };
 
-  // const handleAdd = () => {
-  //   const ok = validate();
-  //
-  //   if(ok && props.addCallback) {
-  //     props.addCallback({role, person});
-  //   }
-  // };
-
   const [addRole, {addData}] = useMutation(gql`
     mutation AddRole($organizationId: ID!, $title: String!, $personId: ID) {
       addRole(organizationId: $organizationId, title: $title, personId: $personId) {

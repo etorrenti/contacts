@@ -109,6 +109,18 @@ const mutation = new GraphQLObjectType({
         return Organization.addFunction({organizationId, name, description})
       }
     },
+    updateFunction: {
+      type: FunctionType,
+      args: {
+        organizationId: { type: new GraphQLNonNull(GraphQLID) },
+        functionId: { type: new GraphQLNonNull(GraphQLID) },
+        name: {type: new GraphQLNonNull(GraphQLString)},
+        description: {type: GraphQLString},
+      },
+      resolve(parentValue, {organizationId, functionId, name, description}){
+        return Organization.updateFunction({organizationId, functionId, name, description})
+      }
+    },
     addContactToFunction: {
       type: FunctionType,
       args: {
